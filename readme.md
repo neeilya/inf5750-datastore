@@ -5,5 +5,5 @@ This repository hosts source code the group project of Open Source Development c
 
 ## Team members:
 - [Marius Andresen](https://github.com/kalosar)
-- [Zufarzhan Ismanov](https://github.com/T1RaeL)
+- [Zufarzhan Ismanov](https://github.com/zufarzhan)
 - [Ilia Ni](https://github.com/neeilya)
