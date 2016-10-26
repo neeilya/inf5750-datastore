@@ -1,0 +1,25 @@
+{
+  "name": "dhis2-data-store-manager",
+  "version": "0.0.1",
+  "description": "DHIS2 Data Store Management application.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/neeilya/inf5750-datastore.git"
+  },
+  "keywords": [
+    "dhis2",
+    "data",
+    "store",
+    "manager"
+  ],
+  "author": "",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/neeilya/inf5750-datastore/issues"
+  },
+  "homepage": "https://github.com/neeilya/inf5750-datastore#readme"
+}
