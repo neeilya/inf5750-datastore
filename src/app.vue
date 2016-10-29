@@ -1,6 +1,12 @@
 <template>
     <div>
-        <h1>Hello world</h1>
+        <header>
+            <router-link to="/">Main</router-link>
+            <router-link to="statistics">Statistics</router-link>
+            <router-link to="about">About</router-link>
+        </header>
+
+        <router-view></router-view>
     </div>
 </template>
 
@@ -11,7 +17,3 @@
         }
     }
 </script>
-
-<style scoped>
-    /* Local styles */
-</style>
