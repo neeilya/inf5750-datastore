@@ -29,15 +29,13 @@
     "clean-webpack-plugin": "^0.1.13",
     "copy-webpack-plugin": "^4.0.0",
     "css-loader": "^0.25.0",
-    "node-sass": "^3.10.1",
-    "sass-loader": "^4.0.2",
+    "extract-text-webpack-plugin": "^1.0.1",
     "style-loader": "^0.13.1",
     "vue": "^2.0.3",
     "vue-loader": "^9.7.0",
     "vue-material": "^0.2.0",
     "vue-resource": "^1.0.3",
     "vue-router": "^2.0.1",
-    "vuex": "^2.0.0",
     "webpack": "^1.13.3"
   }
 }
