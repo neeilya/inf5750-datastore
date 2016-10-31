@@ -8,7 +8,7 @@ This repository hosts source code the group project of Open Source Development c
 - [Zufarzhan Ismanov](https://github.com/zufarzhan)
 - [Ilia Ni](https://github.com/neeilya)
 
-## Instructions
+## Installation instructions
 - Install [npm/node](https://nodejs.org/en/)
 - Install [webpack](https://webpack.github.io/) globally `(sudo) npm install -G webpack`
 - In the root of the project run `npm install` command
