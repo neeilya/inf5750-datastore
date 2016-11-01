@@ -18,7 +18,7 @@ This repository hosts source code the group project of Open Source Development c
 ## Development
 - Install webpack-dev-server globally `sudo npm install -G webpack-dev-server`
 - Go to project root
-- Run `webpack-dev-server --content-base build`
+- Run `npm run dev`
 - Go to http://localhost:8080/build/index.html
 - Add http://localhost:8080 URL to DHIS2 CORS white list:
   - Login to https://play.dhis2.org/demo
