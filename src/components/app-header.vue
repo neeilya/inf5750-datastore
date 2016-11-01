@@ -3,7 +3,10 @@
         <div class="flex container">
             <h2 class="md-title">
                 <router-link to="/">
-                    <md-button class="mx-0">Data Store Manager</md-button>
+                    <md-button class="mx-0">
+                        <img class="primary-logo" src="assets/img/logo.png" />
+                        Data Store Manager
+                    </md-button>
                 </router-link>
             </h2>
             <h2 class="md-title">
@@ -19,7 +22,7 @@
             <h2 class="md-title align-right">
                 <a href="/">
                     <md-button class="mx-0">
-                        <img class="logo" width="20" src="assets/img/dhis2.png">
+                        <img class="logo" src="assets/img/dhis2.png">
                     </md-button>
                 </a>
             </h2>
@@ -41,6 +44,13 @@
         padding-top: 13px;
         margin-top: 0;
         margin-bottom: 0;
+    }
+
+    .primary-logo {
+        width: 30px;
+        margin-right: 5px;
+        position: relative;
+        bottom: 2px;
     }
 
     .logo {
