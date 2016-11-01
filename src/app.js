@@ -11,8 +11,12 @@ Vue.use(VueRouter);
 Vue.use(VueMaterial);
 
 Vue.material.theme.register('default', {
-  primary: 'blue-grey',
-  accent: 'white'
+    primary: {
+        color: 'blue-grey',
+        hue: 800
+    },
+    accent: 'white',
+    warn: 'teal'
 });
 
 const router = new VueRouter({

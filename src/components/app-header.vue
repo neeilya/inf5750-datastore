@@ -31,14 +31,6 @@
 </template>
 
 <style scoped>
-    .md-toolbar {
-        min-height: 0;
-    }
-
-    .md-theme-default .md-toolbar, .md-theme-default.md-toolbar {
-        background-color: #37474F;
-    }
-
     .md-button {
         padding-bottom: 13px;
         padding-top: 13px;
