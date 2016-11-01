@@ -7,7 +7,7 @@
 <script>
     export default {
         created() {
-            console.log('graph component has been rendered!');
+            //
         }
     }
 </script>

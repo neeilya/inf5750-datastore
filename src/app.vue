@@ -1,5 +1,5 @@
 <template>
-    <div v-md-theme="'default'">
+    <div class="body" v-md-theme="'default'">
         <app-header></app-header>
 
         <div class="container content">
@@ -13,7 +13,7 @@
 
     export default {
         created() {
-            console.log('Hello world!');
+            //
         },
         components: {
             'app-header': appHeader
@@ -22,6 +22,10 @@
 </script>
 
 <style>
+    body {
+        background: #dddddd;
+    }
+
     .md-toolbar {
         min-height: 0;
     }

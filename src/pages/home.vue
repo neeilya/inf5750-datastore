@@ -16,11 +16,11 @@
     export default {
         data() {
             return {
-
+                //
             }
         },
         created() {
-            console.log('this is home page');
+            //
         },
         components: {
             browser,
@@ -30,5 +30,7 @@
 </script>
 
 <style scoped>
-    /* Scoped local styles */
+    .md-card {
+        min-height: 400px;
+    }
 </style>

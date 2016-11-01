@@ -18,7 +18,7 @@
 <script>
     export default {
         created() {
-            console.log('browser component has been rendered!');
+            //
         }
     }
 </script>

@@ -10,7 +10,7 @@
 <script>
     export default {
         created() {
-            console.log('this is statistics page');
+            //
         }
     }
 </script>
