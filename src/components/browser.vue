@@ -26,7 +26,7 @@
 
             </md-list>
 
-            <md-button class="md-icon-button md-raised md-warn action-button mx-0">
+            <md-button class="md-icon-button md-raised md-warn action-button">
                 <md-icon class="md-accent">add</md-icon>
                 <md-tooltip md-direction="top">Create item/namespace</md-tooltip>
             </md-button>

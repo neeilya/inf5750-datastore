@@ -4,10 +4,16 @@
             <input placeholder="Key">
             <textarea placeholder="Value"></textarea>
 
-            <md-button class="md-icon-button md-raised md-violet action-button mx-0">
-                <md-icon class="md-accent">done</md-icon>
-                <md-tooltip md-direction="top">Create item/namespace</md-tooltip>
-            </md-button>
+            <div class="action-button">
+                <md-button class="md-icon-button md-raised md-danger">
+                    <md-icon class="md-accent">delete</md-icon>
+                    <md-tooltip md-direction="top">Create item/namespace</md-tooltip>
+                </md-button>
+                <md-button class="md-icon-button md-raised md-violet">
+                    <md-icon class="md-accent">done</md-icon>
+                    <md-tooltip md-direction="top">Create item/namespace</md-tooltip>
+                </md-button>
+            </div>
         </md-card-content>
     </md-card>
 </template>

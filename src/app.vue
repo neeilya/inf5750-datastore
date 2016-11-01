@@ -73,7 +73,11 @@
         padding: 0 10px;
     }
 
-    .md-accent {
+    .md-icon.md-accent {
         color: #fff !important;
+    }
+
+    .md-button.md-danger {
+        background-color: #EF5350 !important;
     }
 </style>
