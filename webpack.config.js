@@ -5,12 +5,13 @@ var CleanWebpackPlugin = require('clean-webpack-plugin');
 module.exports = {
     entry: "./src/app.js",
     output: {
-        filename: "build/app.js"
+        filename: "build/assets/js/app.js"
     },
     plugins: [
         new CleanWebpackPlugin(['build']),
         new CopyWebpackPlugin([
-            { from: './index.html', to: './build/' }
+            { from: './index.html', to: './build/' },
+            { from: './assets', to: './build/assets'}
         ])
     ],
     module: {
