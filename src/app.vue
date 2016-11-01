@@ -22,6 +22,25 @@
 </script>
 
 <style>
+    .md-toolbar {
+        min-height: 0;
+    }
+
+    .action-button {
+        position: absolute;
+        right: 20px;
+        bottom: 20px;
+    }
+
+    .action-button.right {
+        right: 16px;
+        bottom: 24px;
+    }
+
+    .h3 {
+        font-size: 120%;
+    }
+
     .container {
         margin: 0 auto;
         width: 1000px;
@@ -37,11 +56,20 @@
     }
 
     .mx-0 {
-        margin-left: 0;
-        margin-right: 0;
+        margin-left: 0 !important;
+        margin-right: 0 !important;
+    }
+
+    .md-icon {
+        color: #fff !important;
     }
 
     .flex {
         display: flex
+    }
+
+    .col-6 {
+        width: 50%;
+        padding: 0 10px;
     }
 </style>

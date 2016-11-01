@@ -1,7 +1,9 @@
 <template>
-    <div>
-        this is editor component content
-    </div>
+    <md-card>
+        <md-card-content>
+            this is editor component content
+        </md-card-content>
+    </md-card>
 </template>
 
 <script>

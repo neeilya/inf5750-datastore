@@ -1,7 +1,11 @@
 <template>
-    <div>
-        <browser></browser>
-        <editor></editor>
+    <div class="flex">
+        <div class="col-6">
+            <browser></browser>
+        </div>
+        <div class="col-6">
+            <editor></editor>
+        </div>
     </div>
 </template>
 
