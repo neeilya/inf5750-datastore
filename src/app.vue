@@ -64,10 +64,6 @@
         margin-right: 0 !important;
     }
 
-    .md-icon {
-        color: #fff !important;
-    }
-
     .flex {
         display: flex
     }
@@ -75,5 +71,9 @@
     .col-6 {
         width: 50%;
         padding: 0 10px;
+    }
+
+    .md-accent {
+        color: #fff !important;
     }
 </style>

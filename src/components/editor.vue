@@ -5,7 +5,7 @@
             <textarea placeholder="Value"></textarea>
 
             <md-button class="md-icon-button md-raised md-violet action-button mx-0">
-                <md-icon>done</md-icon>
+                <md-icon class="md-accent">done</md-icon>
                 <md-tooltip md-direction="top">Create item/namespace</md-tooltip>
             </md-button>
         </md-card-content>
