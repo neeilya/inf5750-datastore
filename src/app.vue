@@ -1,8 +1,10 @@
 <template>
-    <div>
+    <div v-md-theme="'default'">
         <app-header></app-header>
 
-        <router-view></router-view>
+        <div class="container content">
+            <router-view></router-view>
+        </div>
     </div>
 </template>
 
@@ -18,3 +20,28 @@
         }
     }
 </script>
+
+<style>
+    .container {
+        margin: 0 auto;
+        width: 1000px;
+        overflow: auto;
+    }
+
+    .container.content {
+        padding: 20px;
+    }
+
+    .flex > .align-right {
+        margin-left: auto;
+    }
+
+    .mx-0 {
+        margin-left: 0;
+        margin-right: 0;
+    }
+
+    .flex {
+        display: flex
+    }
+</style>
