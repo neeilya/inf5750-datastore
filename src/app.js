@@ -10,6 +10,11 @@ Vue.use(VueResource);
 Vue.use(VueRouter);
 Vue.use(VueMaterial);
 
+// Binding new instance to $events property to properly manipulate
+// events globally across components
+Vue.prototype.$events = new Vue();
+
+// Registering global theme
 Vue.material.theme.register('default', {
     primary: {
         color: 'blue-grey',
@@ -19,13 +24,16 @@ Vue.material.theme.register('default', {
     warn: 'teal'
 });
 
+// Creating router instance
 const router = new VueRouter({
     routes: routes
 });
 
+// Registering global App component
 const app = new Vue({
     router: router,
     render: h => h(App)
 });
 
+// Binding global Vue component to element with app id
 app.$mount('#app');
