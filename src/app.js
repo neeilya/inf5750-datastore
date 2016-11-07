@@ -3,6 +3,7 @@ import VueResource from 'vue-resource';
 import VueRouter from 'vue-router';
 import VueMaterial from 'vue-material';
 import 'vue-material/dist/vue-material.css';
+import EventEmitter from 'events';
 import App from './app.vue';
 import routes from './routes';
 
@@ -10,9 +11,9 @@ Vue.use(VueResource);
 Vue.use(VueRouter);
 Vue.use(VueMaterial);
 
-// Binding new instance to $events property to properly manipulate
+// Binding EventEmitter to $events property to properly manipulate
 // events globally across components
-Vue.prototype.$events = new Vue;
+Vue.prototype.$events = new EventEmitter;
 
 // Registering global theme
 Vue.material.theme.register('default', {

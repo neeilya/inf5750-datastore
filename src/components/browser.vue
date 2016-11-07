@@ -52,15 +52,15 @@
         methods: {
             // dummy methods for editor component
             fireNamespaceClickedEvent(namespaceName) {
-                this.$events.$emit('namespaceClicked', namespaceName);
+                this.$events.emit('namespaceClicked', namespaceName);
             },
             fireItemClickedEvent(namespaceName, itemName) {
-                this.$events.$emit('itemClicked', namespaceName, itemName);
+                this.$events.emit('itemClicked', namespaceName, itemName);
             },
             fireCreateItemEvent() {
-                this.$events.$emit('createNamespace');
+                this.$events.emit('createNamespace');
                 // check if namespace is chosen and if then fire createItem event otherwise fire createNamespace event
-                // this.$events.$emit('createItem');
+                // this.$events.emit('createItem');
             }
         }
     }

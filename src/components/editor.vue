@@ -23,7 +23,6 @@
     export default {
         data() {
             return {
-                //
                 visible: {
                     deleteButton: false,
                     error: false,
@@ -38,9 +37,9 @@
             }
         },
         created () {
-            this.$events.$on('itemClicked', this.handleItemClicked);
-            this.$events.$on('createItem', this.handleCreateItem);
-            this.$events.$on('createNamespace', this.handleCreateNamespace);
+            this.$events.on('itemClicked', this.handleItemClicked);
+            this.$events.on('createItem', this.handleCreateItem);
+            this.$events.on('createNamespace', this.handleCreateNamespace);
         },
         methods: {
             deleteButton () {
@@ -48,6 +47,12 @@
             },
             saveButton () {
                 this.visible.deleteButton = true;
+            },
+            handleCreateItem() {
+
+            },
+            handleCreateNamespace() {
+
             },
             handleItemClicked(itemName, namespaceName) {
                 alert('Clicked');
@@ -63,16 +68,7 @@
                         this.loading = false;
                     })
                 this.visible.deleteButton = true;
-            },
-            handleCreateItem(namespace) {
-
-            },
-            createNamespace() {
-
             }
-        },
-        created() {
-            //
         }
     }
 </script>
