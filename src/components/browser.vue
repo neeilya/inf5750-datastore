@@ -20,13 +20,23 @@
                     </md-list-item>
                 </md-list>
 
-                <md-list-item>
+                <md-list-item v-on:click="fireNamespaceClickedEvent('social-media-video')">
                     <md-icon>folder</md-icon> <span>social-media-video</span>
                 </md-list-item>
-
+                <md-list class="md-dense sublist">
+                    <md-list-item v-on:click="fireItemClickedEvent('social-media-video', 'hjcF14oVjo4')">
+                        <md-icon>insert_drive_file</md-icon> <span>hjcF14oVjo4</span>
+                    </md-list-item>
+                    <md-list-item>
+                        <md-icon>insert_drive_file</md-icon> <span>C4C3vNaunZ5</span>
+                    </md-list-item>
+                    <md-list-item>
+                        <md-icon>insert_drive_file</md-icon> <span>KGoevJZx0dq</span>
+                    </md-list-item>
+                </md-list>
             </md-list>
 
-            <md-button class="md-icon-button md-raised md-warn action-button">
+            <md-button v-on:click="fireCreateItemEvent()" class="md-icon-button md-raised md-warn action-button">
                 <md-icon class="md-accent">add</md-icon>
                 <md-tooltip md-direction="top">Create item/namespace</md-tooltip>
             </md-button>
@@ -38,6 +48,20 @@
     export default {
         created() {
             //
+        },
+        methods: {
+            // dummy methods for editor component
+            fireNamespaceClickedEvent(namespaceName) {
+                this.$events.$emit('namespaceClicked', namespaceName);
+            },
+            fireItemClickedEvent(namespaceName, itemName) {
+                this.$events.$emit('itemClicked', namespaceName, itemName);
+            },
+            fireCreateItemEvent() {
+                this.$events.$emit('createNamespace');
+                // check if namespace is chosen and if then fire createItem event otherwise fire createNamespace event
+                // this.$events.$emit('createItem');
+            }
         }
     }
 </script>

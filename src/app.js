@@ -12,7 +12,7 @@ Vue.use(VueMaterial);
 
 // Binding new instance to $events property to properly manipulate
 // events globally across components
-Vue.prototype.$events = new Vue();
+Vue.prototype.$events = new Vue;
 
 // Registering global theme
 Vue.material.theme.register('default', {
