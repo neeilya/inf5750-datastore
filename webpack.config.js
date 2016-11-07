@@ -1,4 +1,6 @@
 var webpack = require('webpack');
+var path = require('path');
+
 var CopyWebpackPlugin = require('copy-webpack-plugin');
 var CleanWebpackPlugin = require('clean-webpack-plugin');
 
@@ -6,6 +8,9 @@ module.exports = {
     entry: "./src/app.js",
     output: {
         filename: "build/assets/js/app.js"
+    },
+    resolve: {
+        root: path.resolve('./src')
     },
     plugins: [
         new CleanWebpackPlugin(['build']),
