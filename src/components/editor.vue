@@ -20,6 +20,8 @@
 </template>
 
 <script>
+    import config from 'config';
+
     export default {
         data() {
             return {
@@ -59,7 +61,7 @@
                 this.currentNamespace = namespaceName;
                 this.item.key = itemName;
                 this.loading = true;
-                this.$http.get(`https://play.dhis2.org/demo/api/25/dataStore/${namespaceName}/${itemName}`).then(
+                this.$http.get(`${ config.api_base_url }/${namespaceName}/${itemName}`).then(
                     (response) => {
                         this.item.value = response.body;
                     }, (error) => {
