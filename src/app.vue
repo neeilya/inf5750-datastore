@@ -84,11 +84,19 @@
         width: 66.666%;
     }
 
+    .text-center {
+        text-align: center;
+    }
+
     .md-icon.md-accent {
         color: #fff !important;
     }
 
     .md-button.md-danger {
         background-color: #EF5350 !important;
+    }
+
+    [v-cloak] {
+        display: none;
     }
 </style>
