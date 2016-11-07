@@ -24,7 +24,7 @@
                     <md-icon>folder</md-icon> <span>social-media-video</span>
                 </md-list-item>
                 <md-list class="md-dense sublist">
-                    <md-list-item v-on:click="fireItemClickedEvent('social-media-video', 'hjcF14oVjo4')">
+                    <md-list-item v-on:click="fireItemClickedEvent('hjcF14oVjo4', 'social-media-video')">
                         <md-icon>insert_drive_file</md-icon> <span>hjcF14oVjo4</span>
                     </md-list-item>
                     <md-list-item>
@@ -54,8 +54,8 @@
             fireNamespaceClickedEvent(namespaceName) {
                 this.$events.emit('namespaceClicked', namespaceName);
             },
-            fireItemClickedEvent(namespaceName, itemName) {
-                this.$events.emit('itemClicked', namespaceName, itemName);
+            fireItemClickedEvent(itemName, namespaceName) {
+                this.$events.emit('itemClicked', itemName, namespaceName);
             },
             fireCreateItemEvent() {
                 this.$events.emit('createNamespace');
