@@ -1,17 +1,18 @@
 <template>
     <md-card>
         <md-card-content>
-            <input placeholder="Key">
-            <textarea placeholder="Value"></textarea>
+            <input v-model="item.key" placeholder="Key">
+            <textarea v-model="item.value" placeholder="Value"/>
+            <span v-if="loading"> Loading ... </span>
 
             <div class="action-button">
-                <md-button class="md-icon-button md-raised md-danger">
+                <md-button v-on:click="deleteButton()" v-if="visible.deleteButton" class="md-icon-button md-raised md-danger">
                     <md-icon class="md-accent">delete</md-icon>
-                    <md-tooltip md-direction="top">Create item/namespace</md-tooltip>
+                    <md-tooltip md-direction="top">delete item/namespace</md-tooltip>
                 </md-button>
-                <md-button class="md-icon-button md-raised md-violet">
+                <md-button v-on:click="saveButton()" class="md-icon-button md-raised md-violet">
                     <md-icon class="md-accent">done</md-icon>
-                    <md-tooltip md-direction="top">Create item/namespace</md-tooltip>
+                    <md-tooltip md-direction="top">save item/namespace</md-tooltip>
                 </md-button>
             </div>
         </md-card-content>
@@ -23,6 +24,51 @@
         data() {
             return {
                 //
+                visible: {
+                    deleteButton: false,
+                    error: false,
+                    success: false
+                },
+                item: {
+                    key: null,
+                    value: null
+                },
+                currentNamespace: null,
+                loading: false
+            }
+        },
+        created () {
+            this.$events.$on('itemClicked', this.handleItemClicked);
+            this.$events.$on('createItem', this.handleCreateItem);
+            this.$events.$on('createNamespace', this.handleCreateNamespace);
+        },
+        methods: {
+            deleteButton () {
+                this.visible.deleteButton = false;
+            },
+            saveButton () {
+                this.visible.deleteButton = true;
+            },
+            handleItemClicked(itemName, namespaceName) {
+                alert('Clicked');
+                this.currentNamespace = namespaceName;
+                this.item.key = itemName;
+                this.loading = true;
+                this.$http.get(`https://play.dhis2.org/demo/api/25/dataStore/${namespaceName}/${itemName}`).then(
+                    (response) => {
+                        this.item.value = response.body;
+                    }, (error) => {
+                        this.$events.$emit('alert.error', error.body.message);
+                    }).finally(() => {
+                        this.loading = false;
+                    })
+                this.visible.deleteButton = true;
+            },
+            handleCreateItem(namespace) {
+
+            },
+            createNamespace() {
+
             }
         },
         created() {
