@@ -10,8 +10,8 @@
 </template>
 
 <script>
-    import browser from '../components/browser.vue';
-    import editor from '../components/editor.vue';
+    import browser from 'components/browser.vue';
+    import editor from 'components/editor.vue';
 
     export default {
         data() {
