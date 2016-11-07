@@ -1,9 +1,9 @@
 <template>
     <div class="flex">
-        <div class="col-6">
+        <div class="col-4">
             <browser></browser>
         </div>
-        <div class="col-6">
+        <div class="col-8">
             <editor></editor>
         </div>
     </div>
@@ -31,6 +31,6 @@
 
 <style scoped>
     .md-card {
-        min-height: 400px;
+        min-height: 450px;
     }
 </style>

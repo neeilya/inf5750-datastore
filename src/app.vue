@@ -68,9 +68,20 @@
         display: flex
     }
 
+    .col-4, .col-6, .col-8 {
+        padding: 0 10px;
+    }
+
     .col-6 {
         width: 50%;
-        padding: 0 10px;
+    }
+
+    .col-4 {
+        width: 33.333%;
+    }
+
+    .col-8 {
+        width: 66.666%;
     }
 
     .md-icon.md-accent {
