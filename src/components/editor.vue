@@ -1,20 +1,22 @@
 <template>
     <md-card>
         <md-card-content>
-            <input v-model="item.key" placeholder="Key">
-            <textarea v-model="item.value" placeholder="Value"/>
-            <span v-if="loading"> Loading ... </span>
+            <fieldset disabled="disabled">
+                <input v-model="item.key" placeholder="Key">
+                <textarea v-model="item.value" placeholder="Value"/>
+                <span v-if="loading"> Loading ... </span>
 
-            <div class="action-button">
-                <md-button v-on:click="deleteButton()" v-if="visible.deleteButton" class="md-icon-button md-raised md-danger">
-                    <md-icon class="md-accent">delete</md-icon>
-                    <md-tooltip md-direction="top">delete item/namespace</md-tooltip>
-                </md-button>
-                <md-button v-on:click="saveButton()" class="md-icon-button md-raised md-violet">
-                    <md-icon class="md-accent">done</md-icon>
-                    <md-tooltip md-direction="top">save item/namespace</md-tooltip>
-                </md-button>
-            </div>
+                <div class="action-button">
+                    <md-button v-on:click="deleteButton()" v-if="visible.deleteButton" class="md-icon-button md-raised md-danger">
+                        <md-icon class="md-accent">delete</md-icon>
+                        <md-tooltip md-direction="top">delete item/namespace</md-tooltip>
+                    </md-button>
+                    <md-button v-on:click="saveButton()" class="md-icon-button md-raised md-violet">
+                        <md-icon class="md-accent">done</md-icon>
+                        <md-tooltip md-direction="top">save item/namespace</md-tooltip>
+                    </md-button>
+                </div>
+            </fieldset>
         </md-card-content>
     </md-card>
 </template>
@@ -118,6 +120,6 @@
     }
 
     .md-violet, .md-violet:hover {
-        background-color: #6639b6 !important;
+        background-color: #6639b6;
     }
 </style>
