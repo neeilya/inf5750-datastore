@@ -30,35 +30,7 @@
             }
         },
         created() {
-            this.fetchNamespaces().then( response => {
-                for(let i = 0; i < response.data.length; ++i) {
-                    let namespace = response.data[i];
-                    let lastNamespace = i === response.data.length - 1;
-
-                    this.namespaces.push({
-                        name: namespace,
-                        keys: []
-                    });
-
-                    this.fetchItemsForNamespace(namespace).then(response => {
-                        for(let j = 0; j < response.data.length; ++j) {
-                            let item = response.data[j];
-                            let lastItem = j === response.data.length - 1;
-
-                            this.fetchItem(namespace, item).then(response => {
-                                this.namespaces[i].keys.push({
-                                    lastUpdated: response.data.lastUpdated,
-                                    id: response.data.id
-                                });
-
-                                if(lastNamespace && lastItem) {
-                                    this.initializing = false;
-                                }
-                            });
-                        }
-                    });
-                }
-            });
+            this.fetch();
         },
         components: {
             spinner: spinner
@@ -72,6 +44,42 @@
             },
             fetchItem(namespace, item) {
                 return this.$http.get(`${ config.api_base_url }/${ namespace }/${ item }/metaData`);
+            },
+            fetch() {
+                this.fetchNamespaces().then( response => {
+                    for(let i = 0; i < response.data.length; ++i) {
+                        let namespace = response.data[i];
+                        let lastNamespace = (i === response.data.length - 1);
+
+                        this.namespaces.push({
+                            name: namespace,
+                            keys: []
+                        });
+
+                        this.fetchItemsForNamespace(namespace).then(response => {
+                            for(let j = 0; j < response.data.length; ++j) {
+                                let item = response.data[j];
+                                let lastItem = (j === response.data.length - 1);
+
+                                this.fetchItem(namespace, item).then(response => {
+                                    let item = response.data;
+
+                                    this.namespaces[i].keys.push({
+                                        id: item.id,
+                                        key: item.key,
+                                        sizeInBytes: item.value.length,
+                                        created: item.created,
+                                        lastUpdated: item.lastUpdated
+                                    });
+
+                                    if(lastNamespace && lastItem) {
+                                        this.initializing = false;
+                                    }
+                                });
+                            }
+                        });
+                    }
+                });
             }
         }
     }
