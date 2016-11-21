@@ -21,7 +21,7 @@
     }
 </script>
 
-<style>
+<style lang="stylus">
     body {
         background: #dddddd;
     }
@@ -98,5 +98,38 @@
 
     [v-cloak] {
         display: none;
+    }
+
+    .md-card .md-toolbar {
+        padding: 15px;
+    }
+
+    .md-button.md-icon-button:not([disabled]):hover {
+        background-color: rgba(0,0,0,.12);
+    }
+
+    fieldset {
+        display: block;
+        -webkit-margin-start: 0;
+        -webkit-margin-end: 0;
+        -webkit-padding-before: 0;
+        -webkit-padding-start: 0;
+        -webkit-padding-end: 0;
+        -webkit-padding-after: 0;
+        min-width: -webkit-min-content;
+        border: none;
+
+        &:disabled {
+            input,
+            button,
+            textarea {
+                cursor: not-allowed;
+            }
+
+            button,
+            .md-button {
+                background-color: rgba(0,0,0,.12);
+            }
+        }
     }
 </style>

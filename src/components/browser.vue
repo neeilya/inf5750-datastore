@@ -86,8 +86,4 @@
     .md-icon {
         color: #7d7d7d;
     }
-
-    .md-toolbar {
-        padding: 15px;
-    }
 </style>
