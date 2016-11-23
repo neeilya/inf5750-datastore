@@ -20,7 +20,7 @@
 
 <script type="text/babel">
     import spinner from 'components/assets/spinner.vue';
-    import config from 'config';
+    import api from 'services/api';
 
     export default {
         data() {
@@ -36,17 +36,8 @@
             spinner: spinner
         },
         methods: {
-            fetchNamespaces() {
-                return this.$http.get(`${ config.api_base_url }`);
-            },
-            fetchItemsForNamespace(namespace) {
-                return this.$http.get(`${ config.api_base_url }/${ namespace }`);
-            },
-            fetchItem(namespace, item) {
-                return this.$http.get(`${ config.api_base_url }/${ namespace }/${ item }/metaData`);
-            },
             fetch() {
-                this.fetchNamespaces().then( response => {
+                api.getAllNamespaces().then( response => {
                     for(let i = 0; i < response.data.length; ++i) {
                         let namespace = response.data[i];
                         let lastNamespace = (i === response.data.length - 1);
@@ -56,12 +47,12 @@
                             keys: []
                         });
 
-                        this.fetchItemsForNamespace(namespace).then(response => {
+                        api.getAllKeysInNamespace(namespace).then(response => {
                             for(let j = 0; j < response.data.length; ++j) {
                                 let item = response.data[j];
                                 let lastItem = (j === response.data.length - 1);
 
-                                this.fetchItem(namespace, item).then(response => {
+                                api.getItemMetadata(namespace, item).then(response => {
                                     let item = response.data;
 
                                     this.namespaces[i].keys.push({
