@@ -37,39 +37,51 @@
         },
         methods: {
             fetch() {
-                api.getAllNamespaces().then( response => {
-                    for(let i = 0; i < response.data.length; ++i) {
-                        let namespace = response.data[i];
-                        let lastNamespace = (i === response.data.length - 1);
+                api.getAllNamespaces().then(response => {
+                    response.data.forEach(namespace => {
+                        this.namespaces.push({ name: namespace, keys: [] });
+                    });
 
-                        this.namespaces.push({
-                            name: namespace,
-                            keys: []
+                    let calls = [];
+
+                    // Fetching all namespaces keys using Promise.all()
+                    // to ensure they all are loaded
+                    response.data.forEach(namespace => {
+                        calls.push(api.getAllKeysInNamespace(namespace));
+                    });
+
+                    Promise.all(calls).then(namespaces => {
+                        let itemCalls = [];
+
+                        // Fetching metadata for all keys via Promise.all()
+                        // to ensure they all are loaded
+                        namespaces.forEach((keys, index) => {
+                            keys.data.forEach(key => {
+                                itemCalls.push(api.getItemMetadata(this.namespaces[index].name, key));
+                            });
                         });
 
-                        api.getAllKeysInNamespace(namespace).then(response => {
-                            for(let j = 0; j < response.data.length; ++j) {
-                                let item = response.data[j];
-                                let lastItem = (j === response.data.length - 1);
-
-                                api.getItemMetadata(namespace, item).then(response => {
-                                    let item = response.data;
-
-                                    this.namespaces[i].keys.push({
-                                        id: item.id,
-                                        key: item.key,
-                                        sizeInBytes: item.value.length,
-                                        created: item.created,
-                                        lastUpdated: item.lastUpdated
-                                    });
-
-                                    if(lastNamespace && lastItem) {
-                                        this.initializing = false;
+                        Promise.all(itemCalls).then(items => {
+                            // Pushing keys to namespaces using namespace
+                            // metaData key value
+                            items.forEach(item => {
+                                for(let i = 0; i < this.namespaces.length; ++i) {
+                                    if(this.namespaces[i].name === item.data.namespace) {
+                                        this.namespaces[i].keys.push({
+                                            id: item.data.namespace,
+                                            key: item.data.key,
+                                            sizeInBytes: item.data.value.length,
+                                            created: item.data.created,
+                                            lastUpdated: item.data.lastUpdated
+                                        });
+                                        break;
                                     }
-                                });
-                            }
+                                }
+                            });
+
+                            this.initializing = false;
                         });
-                    }
+                    });
                 });
             }
         }
