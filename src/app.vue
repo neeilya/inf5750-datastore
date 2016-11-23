@@ -21,7 +21,7 @@
     }
 </script>
 
-<style lang="stylus">
+<style lang="sass">
     body {
         background: #dddddd;
     }
