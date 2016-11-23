@@ -33,6 +33,7 @@
     "extract-text-webpack-plugin": "^1.0.1",
     "node-sass": "^3.13.0",
     "sass-loader": "^4.0.2",
+    "store": "git+https://git.@github.com/marcuswestin/store.js.git",
     "style-loader": "^0.13.1",
     "vue": "^2.0.3",
     "vue-loader": "^9.7.0",

@@ -21,12 +21,14 @@
 <script type="text/babel">
     import spinner from 'components/assets/spinner.vue';
     import api from 'services/api';
+    import store from 'store';
 
     export default {
         data() {
             return {
                 initializing: true,
-                namespaces: []
+                namespaces: [],
+                cached_at: null
             }
         },
         created() {
@@ -36,7 +38,33 @@
             spinner: spinner
         },
         methods: {
+            /**
+             * Cache all data
+             * @return {undefined}
+             */
+            cache() {
+                store.set('cachedDataStoreStatistics', {
+                    cached_at: Date.now(),
+                    data: this.namespaces
+                });
+
+                this.cached_at = Date.now();
+            },
+            /**
+             * Fetch all data from server
+             * @return {undefined}
+             */
             fetch() {
+                let cached = store.get('cachedDataStoreStatistics');
+
+                if(cached !== undefined && cached !== null) {
+                    this.namespaces = cached.data;
+                    this.cached_at = cached.cached_at;
+                    this.initializing = false;
+
+                    return;
+                }
+
                 api.getAllNamespaces().then(response => {
                     response.data.forEach(namespace => {
                         this.namespaces.push({ name: namespace, keys: [] });
@@ -80,6 +108,7 @@
                             });
 
                             this.initializing = false;
+                            this.cache();
                         });
                     });
                 });
