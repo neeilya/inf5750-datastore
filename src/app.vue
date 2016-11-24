@@ -51,12 +51,21 @@
         overflow: auto;
     }
 
+    .pull-right {
+        float: right;
+    }
+
     .container.content {
         padding: 20px;
     }
 
     .flex > .align-right {
         margin-left: auto;
+    }
+
+    .my-0 {
+        margin-top: 0 !important;
+        margin-bottom: 0 !important;
     }
 
     .mx-0 {
