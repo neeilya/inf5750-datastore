@@ -13,35 +13,6 @@
                         <md-icon>insert_drive_file</md-icon> <span>{{ key }}</span>
                     </md-list-item>
                 </md-list>
-                <!-- <md-list-item>
-                    <md-icon>folder</md-icon> <span>METADATASTORE</span>
-                </md-list-item>
-                <md-list class="md-dense sublist">
-                    <md-list-item>
-                        <md-icon>insert_drive_file</md-icon> <span>Version_1</span>
-                    </md-list-item>
-                    <md-list-item>
-                        <md-icon>insert_drive_file</md-icon> <span>Version_2</span>
-                    </md-list-item>
-                    <md-list-item>
-                        <md-icon>insert_drive_file</md-icon> <span>Version_3</span>
-                    </md-list-item>
-                </md-list>
-
-                <md-list-item v-on:click="fireNamespaceClickedEvent('social-media-video')">
-                    <md-icon>folder</md-icon> <span>social-media-video</span>
-                </md-list-item>
-                <md-list class="md-dense sublist">
-                    <md-list-item v-on:click="fireItemClickedEvent('hjcF14oVjo4', 'social-media-video')">
-                        <md-icon>insert_drive_file</md-icon> <span>hjcF14oVjo4</span>
-                    </md-list-item>
-                    <md-list-item>
-                        <md-icon>insert_drive_file</md-icon> <span>C4C3vNaunZ5</span>
-                    </md-list-item>
-                    <md-list-item>
-                        <md-icon>insert_drive_file</md-icon> <span>KGoevJZx0dq</span>
-                    </md-list-item>
-                </md-list> -->
             </md-list>
 
             <md-button v-on:click="fireCreateItemEvent()" class="md-icon-button md-raised md-warn action-button">
