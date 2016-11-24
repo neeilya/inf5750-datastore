@@ -8,11 +8,15 @@
                 <md-list-item v-on:click="getAllKeysInNamespace(namespace.name)">
                     <md-icon>folder</md-icon> <span>{{ namespace.name }}</span>
                 </md-list-item>
-                <md-list class="md-dense sublist" v-if="namespace.isClicked" v-for="key in namespace.keys">
-                    <md-list-item>
-                        <md-icon>insert_drive_file</md-icon> <span>{{ key }}</span>
-                    </md-list-item>
-                </md-list>
+                <template v-if="namespace.isClicked">
+                    <md-list class="md-dense sublist">
+                        <md-list-item v-for="key in namespace.keys" 
+                                      v-on:click="fireItemClickedEvent(key, namespace.name)"
+                        >
+                            <md-icon>insert_drive_file</md-icon> <span>{{ key }}</span>
+                        </md-list-item>
+                    </md-list>
+                </template>
             </md-list>
 
             <md-button v-on:click="fireCreateItemEvent()" class="md-icon-button md-raised md-warn action-button">
@@ -23,7 +27,7 @@
     </md-card>
 </template>
 
-<script>
+<script type="text/babel">
     import api from 'services/api';
 
     export default {
@@ -64,6 +68,7 @@
                 }
             },
             getAllKeysInNamespace(namespace) {
+                this.$events.emit('namespaceClicked', namespace);
                 let index = this.findNamespaceIndex(namespace);
                 if(this.namespaces[index].isClicked == true) {
                     this.namespaces[index].isClicked = false;
