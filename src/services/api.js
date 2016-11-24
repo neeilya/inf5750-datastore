@@ -8,7 +8,7 @@ export default {
      */
     getAllNamespaces() {
         return Vue.http.get(`${ config.api_base_url }`).catch(response => {
-            console.log(response);
+            throw response;
         });
     },
     /**
@@ -18,7 +18,7 @@ export default {
      */
     getAllKeysInNamespace(namespace) {
         return Vue.http.get(`${ config.api_base_url }/${ namespace }`).catch(response => {
-            console.log(response);
+            throw response;
         });
     },
     /**
@@ -29,7 +29,7 @@ export default {
      */
     getItemMetadata(namespace, item) {
         return Vue.http.get(`${ config.api_base_url }/${ namespace }/${ item }/metaData`).catch(response => {
-            console.log(response);
+            throw response;
         });
     }
 };
