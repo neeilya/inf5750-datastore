@@ -7,9 +7,7 @@ export default {
      * @returns {Promise.<T>}
      */
     getAllNamespaces() {
-        return Vue.http.get(`${ config.api_base_url }`).catch(response => {
-            throw response;
-        });
+        return Vue.http.get(`${ config.api_base_url }`);
     },
     /**
      * Fetch all items' keys in the datastore
@@ -17,9 +15,16 @@ export default {
      * @returns {Promise.<T>}
      */
     getAllKeysInNamespace(namespace) {
-        return Vue.http.get(`${ config.api_base_url }/${ namespace }`).catch(response => {
-            throw response;
-        });
+        return Vue.http.get(`${ config.api_base_url }/${ namespace }`);
+    },
+    /**
+     * Get item
+     * @param namespace
+     * @param item
+     * @returns {Promise.<T>}
+     */
+    getItem(namespace, item) {
+        return Vue.http.get(`${ config.api_base_url }/${ namespace }/${ item }`);
     },
     /**
      * Get item's metadata
@@ -28,9 +33,7 @@ export default {
      * @returns {Promise.<T>}
      */
     getItemMetadata(namespace, item) {
-        return Vue.http.get(`${ config.api_base_url }/${ namespace }/${ item }/metaData`).catch(response => {
-            throw response;
-        });
+        return Vue.http.get(`${ config.api_base_url }/${ namespace }/${ item }/metaData`);
     },
     /**
      * Store new item
@@ -40,9 +43,7 @@ export default {
      * @returns {Promise.<T>}
      */
     createItem(namespace, key, body) {
-        return Vue.http.post(`${ config.api_base_url }/${ namespace }/${ key }`, body).catch(response => {
-            throw response;
-        });
+        return Vue.http.post(`${ config.api_base_url }/${ namespace }/${ key }`, body);
     },
     /**
      * Update existing item
@@ -52,9 +53,7 @@ export default {
      * @returns {Promise.<T>}
      */
     updateItem(namespace, key, body) {
-        return Vue.http.put(`${ config.api_base_url }/${ namespace }/${ key }`, body).catch(response => {
-            throw response;
-        });
+        return Vue.http.put(`${ config.api_base_url }/${ namespace }/${ key }`, body);
     },
     /**
      * Delete key from namespace
@@ -63,9 +62,7 @@ export default {
      * @returns {Promise.<T>}
      */
     deleteItem(namespace, key) {
-        return Vue.http.delete(`${ config.api_base_url }/${ namespace }/${ key }`).catch(response => {
-            throw response;
-        });
+        return Vue.http.delete(`${ config.api_base_url }/${ namespace }/${ key }`);
     },
     /**
      * Delete namespace
@@ -73,8 +70,6 @@ export default {
      * @returns {Promise.<T>}
      */
     deleteNamespace(namespace) {
-        return Vue.http.delete(`${ config.api_base_url }/${ namespace }`).catch(response => {
-            throw response;
-        });
+        return Vue.http.delete(`${ config.api_base_url }/${ namespace }`);
     }
 };
