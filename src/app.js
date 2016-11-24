@@ -2,14 +2,19 @@ import Vue from 'vue';
 import VueResource from 'vue-resource';
 import VueRouter from 'vue-router';
 import VueMaterial from 'vue-material';
+import VueMoment from 'vue-moment';
 import 'vue-material/dist/vue-material.css';
 import EventEmitter from 'events';
 import App from './app.vue';
 import routes from './routes';
+import filters from './filters';
 
 Vue.use(VueResource);
 Vue.use(VueRouter);
 Vue.use(VueMaterial);
+Vue.use(VueMoment);
+
+filters.register();
 
 // Binding EventEmitter to $events property to properly manipulate
 // events globally across components
