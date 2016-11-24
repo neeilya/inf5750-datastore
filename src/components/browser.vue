@@ -4,8 +4,16 @@
             <span class="h3">Explorer</span>
         </md-toolbar>
         <md-card-content>
-            <md-list class="md-dense">
-                <md-list-item>
+            <md-list class="md-dense" v-for="namespace in namespaces">
+                <md-list-item v-on:click="getAllKeysInNamespace(namespace.name)">
+                    <md-icon>folder</md-icon> <span>{{ namespace.name }}</span>
+                </md-list-item>
+                <md-list class="md-dense sublist" v-if="namespace.isClicked" v-for="key in namespace.keys">
+                    <md-list-item>
+                        <md-icon>insert_drive_file</md-icon> <span>{{ key }}</span>
+                    </md-list-item>
+                </md-list>
+                <!-- <md-list-item>
                     <md-icon>folder</md-icon> <span>METADATASTORE</span>
                 </md-list-item>
                 <md-list class="md-dense sublist">
@@ -33,7 +41,7 @@
                     <md-list-item>
                         <md-icon>insert_drive_file</md-icon> <span>KGoevJZx0dq</span>
                     </md-list-item>
-                </md-list>
+                </md-list> -->
             </md-list>
 
             <md-button v-on:click="fireCreateItemEvent()" class="md-icon-button md-raised md-warn action-button">
@@ -45,9 +53,17 @@
 </template>
 
 <script>
+    import api from 'services/api';
+
     export default {
+        data() {
+            return {
+                namespaces: [],
+            }
+        },
         created() {
             //
+            this.getAllNamespaces();
         },
         methods: {
             // dummy methods for editor component
@@ -61,6 +77,37 @@
                 this.$events.emit('createNamespace');
                 // check if namespace is chosen and if then fire createItem event otherwise fire createNamespace event
                 // this.$events.emit('createItem');
+            },
+            getAllNamespaces() {
+                api.getAllNamespaces().then(response => {
+                    response.data.forEach(namespace => {
+                        this.namespaces.push({ name: namespace, keys: [], isClicked: false });
+                    });                    
+                });
+            },
+            findNamespaceIndex(namespace) {
+                for(let i = 0; i < this.namespaces.length; ++i) {
+                    if(this.namespaces[i].name === namespace) {
+                        return i;
+                    }
+                }
+            },
+            getAllKeysInNamespace(namespace) {
+                let index = this.findNamespaceIndex(namespace);
+                if(this.namespaces[index].isClicked == true) {
+                    this.namespaces[index].isClicked = false;
+                    return;
+                }
+                if(this.namespaces[index].keys.length > 0) {
+                    this.namespaces[index].isClicked = true;
+                    return;
+                }
+                api.getAllKeysInNamespace(namespace).then(response => {
+                    response.data.forEach(key => {
+                        this.namespaces[index].keys.push(key);
+                    });   
+                    this.namespaces[index].isClicked = true;              
+                });
             }
         }
     }
