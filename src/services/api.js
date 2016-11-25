@@ -45,14 +45,6 @@ export default {
     createItem(namespace, key, body) {
         return Vue.http.post(`${ config.api_base_url }/${ namespace }/${ key }`, body);
     },
-     /**
-     * Store new namespace
-     * @param namespace
-     * @returns {Promise.<T>}
-     */
-    createItem(namespace) {
-        return Vue.http.post(`${ config.api_base_url }`, namespace);
-    },
     /**
      * Update existing item
      * @param namespace
