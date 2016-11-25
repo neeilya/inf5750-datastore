@@ -3,20 +3,20 @@
         <app-header></app-header>
 
         <div class="container content">
+            <notifications></notifications>
             <router-view></router-view>
         </div>
     </div>
 </template>
 
 <script>
-    import appHeader from './components/app-header.vue';
+    import appHeader from 'components/app-header.vue';
+    import notifications from 'components/notifications.vue';
 
     export default {
-        created() {
-            //
-        },
         components: {
-            'app-header': appHeader
+            'app-header': appHeader,
+            'notifications': notifications
         }
     }
 </script>
@@ -46,6 +46,7 @@
     }
 
     .container {
+        position: relative;
         margin: 0 auto;
         width: 1000px;
         overflow: auto;
