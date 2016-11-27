@@ -63,6 +63,8 @@
                 this.saving = true;
 
                 api.deleteItem(this.item.namespace, this.item.key).then(response => {
+                    this.$events.emit('itemDeleted', this.item.namespace, this.item.key);
+
                     this.$events.emit('notification', {
                         type: 'success',
                         message: 'Key has been deleted successfully',
