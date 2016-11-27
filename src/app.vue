@@ -161,4 +161,8 @@
             }
         }
     }
+
+    .md-option {
+        padding: 0 16px;
+    }
 </style>
