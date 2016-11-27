@@ -92,13 +92,13 @@
             },
             handleItemDeletedEvent(namespaceName, itemName) {
                 let namespaceIndex = this.findNamespaceIndex(namespaceName);
-                if(this.namespaces[namespaceIndex].keys.length == 1) {
+                if(this.namespaces[namespaceIndex].keys.length === 1) {
                     this.namespaces.splice(namespaceIndex, 1);
                     return;
                 }
-                let keyIndex = this.namespaces[namespaceIndex].keys.indexOf(oldName);
+                let keyIndex = this.namespaces[namespaceIndex].keys.indexOf(itemName);
                 if (keyIndex > -1) {
-                    this.namespaces[namespaceIndex].keys.splice(index, 1);
+                    this.namespaces[namespaceIndex].keys.splice(keyIndex, 1);
                 }
             }
         }
