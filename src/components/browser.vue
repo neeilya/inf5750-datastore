@@ -125,6 +125,14 @@
         color: #7d7d7d;
     }
 
+    .md-list.md-dense {
+        padding: 0px;
+    }
+
+    .md-list.md-dense.sublist {
+        padding: 0 0 0 20px;
+    }
+
     .scrollable
     {
         height: 400px;
