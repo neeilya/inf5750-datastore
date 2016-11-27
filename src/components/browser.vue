@@ -39,7 +39,6 @@
         created() {
             this.getAllNamespaces();
             this.$events.on('itemCreated', this.handleItemCreatedEvent);
-            this.$events.on('itemCreated', this.handleItemUpdatedEvent);
             this.$events.on('itemDeleted', this.handleItemDeletedEvent);
         },
         methods: {
@@ -90,13 +89,6 @@
                     this.namespaces.push({ name: namespaceName, keys: (typeof itemName != 'undefined') ? [itemName] : [], isClicked: false });
                 }
             },
-            handleItemUpdatedEvent(namespaceName, itemName, oldName) {
-                let namespaceIndex = this.findNamespaceIndex(namespaceName);
-                let keyIndex = this.namespaces[namespaceIndex].keys.indexOf(oldName);
-                if (keyIndex > -1) {
-                    this.namespaces[namespaceIndex].keys[keyIndex] = itemName;
-                }
-            },
             handleItemDeletedEvent(namespaceName, itemName) {
                 let namespaceIndex = this.findNamespaceIndex(namespaceName);
                 if(this.namespaces[namespaceIndex].keys.length == 1) {
@@ -134,7 +126,11 @@
     }
 
     .md-list.md-dense {
-        padding: 0;
+        padding: 0px;
+    }
+
+    .md-list.md-dense.sublist {
+        padding: 0 0 0 20px;
     }
 
     .scrollable
