@@ -2,15 +2,19 @@
     <md-card>
         <md-toolbar>
             <span class="h3">Explorer</span>
+            <div class="toggle-asc">
+                <span class="h3">Sort (asc)</span> <md-switch v-model="asc" class="md-warn"></md-switch>
+            </div>
+            
         </md-toolbar>
         <md-card-content class="scrollable">
-            <md-list class="md-dense" v-for="namespace in namespaces">
+            <md-list class="md-dense" v-for="namespace in getSortedNamespaces()">
                 <md-list-item v-on:click="getAllKeysInNamespace(namespace.name)">
                     <md-icon>folder</md-icon> <span>{{ namespace.name }}</span>
                 </md-list-item>
                 <template v-if="namespace.isClicked">
                     <md-list class="md-dense sublist">
-                        <md-list-item v-for="key in namespace.keys" 
+                        <md-list-item v-for="key in getSortedKeys(namespace)" 
                                       v-on:click="fireItemClickedEvent(namespace.name, key)"
                         >
                             <md-icon>insert_drive_file</md-icon> <span>{{ key }}</span>
@@ -33,6 +37,7 @@
     export default {
         data() {
             return {
+                asc: true,
                 namespaces: [],
             }
         },
@@ -100,7 +105,23 @@
                 if (keyIndex > -1) {
                     this.namespaces[namespaceIndex].keys.splice(keyIndex, 1);
                 }
-            }
+            },
+            getSortedNamespaces() {
+                return this.namespaces.slice().sort((a, b) => {
+                    if(this.asc) {
+                        return a.name.toLowerCase() > b.name.toLowerCase() ? 1 : 0;
+                    }
+                    return a.name.toLowerCase() < b.name.toLowerCase() ? 1 : 0;
+                });
+            },
+            getSortedKeys(namespace) {
+                return namespace.keys.slice().sort((a, b) => {
+                    if(this.asc) {
+                        return a.toLowerCase() > b.toLowerCase() ? 1 : 0;
+                    }
+                    return a.toLowerCase() < b.toLowerCase() ? 1 : 0;
+                });
+            },
         }
     }
 </script>
@@ -134,9 +155,13 @@
         padding: 0 0 0 20px;
     }
 
-    .scrollable
-    {
-        height: 400px;
+    .scrollable {
+        max-height: 450px;
         overflow:auto;
+    }
+
+    .toggle-asc {
+        position: absolute;
+        right: 15px;
     }
 </style>
