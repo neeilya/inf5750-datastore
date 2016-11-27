@@ -3,11 +3,11 @@
         <div>
             <md-card-content>
                 <fieldset v-bind:disabled="! editMode || saving">
-                    <input v-model="item.key" placeholder="Key">
+                    <input v-bind:value="item.key" v-bind:disabled="updateMode" placeholder="Key">
                     <textarea v-model="item.value" placeholder="Value"></textarea>
 
                     <div v-show="editMode" class="action-button">
-                        <md-button v-on:click="deleteItem()" class="md-icon-button md-raised md-danger">
+                        <md-button v-on:click="deleteItem()" v-if="updateMode" class="md-icon-button md-raised md-danger">
                             <md-icon class="md-accent">delete</md-icon>
                             <md-tooltip md-direction="top">Delete item</md-tooltip>
                         </md-button>
@@ -33,7 +33,6 @@
                 saving: false,
                 editMode: false,
                 mode: null,
-                itemOld: {},
                 item: {},
                 namespaces: []
             }
@@ -47,6 +46,13 @@
         },
         computed: {
             /**
+             * Calculate if current mode is update
+             * @return {Boolean}
+             */
+            updateMode() {
+                return this.mode === 'update';
+            },
+            /**
              * Calculate item value for proper json validation on server
              * @return { String | Object }
              */
@@ -59,6 +65,10 @@
             }
         },
         methods: {
+            /**
+             *  Delete item from server
+             *  @return {void}
+             */
             deleteItem() {
                 this.saving = true;
 
@@ -102,10 +112,6 @@
              * @return {void}
              */
             fireItemSavedEvent() {
-                if(this.mode === 'update') {
-                    this.$events.emit('itemUpdated', this.item.namespace, this.item.key, this.itemOld.key);
-                }
-
                 if(this.mode === 'create') {
                     this.$events.emit('itemCreated', this.item.namespace, this.item.key);
                 }
@@ -146,10 +152,6 @@
                 this.editMode = false;
                 this.mode = 'update';
 
-                // to distinguish old and new values
-                this.itemOld.key = key;
-                this.itemOld.namespace = namespace;
-
                 api.getItem(namespace, key).then(response => {
                     this.item.key = key;
                     this.item.value = response.body;
@@ -165,8 +167,14 @@
                     this.loading = false;
                 });
             },
+            /**
+             * Handle createItem event
+             * @return {void}
+             */
             handleCreateItemEvent() {
                 this.mode = 'create';
+                this.editMode = true;
+                this.item = {};
             }
         }
     }
