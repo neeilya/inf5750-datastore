@@ -51,7 +51,7 @@
             getAllNamespaces() {
                 api.getAllNamespaces().then(response => {
                     response.data.forEach(namespace => {
-                        this.namespaces.push({ name: namespace, keys: [], isClicked: false });
+                        this.namespaces.push({ name: namespace, keys: [], isClicked: false, isFetched: false});
                     });                    
                 });
             },
@@ -70,7 +70,7 @@
                     this.namespaces[index].isClicked = false;
                     return;
                 }
-                if(this.namespaces[index].keys.length > 0) {
+                if(this.namespaces[index].keys.length > 0 && this.namespaces[index].isFetched) {
                     this.namespaces[index].isClicked = true;
                     return;
                 }
@@ -78,13 +78,14 @@
                     response.data.forEach(key => {
                         this.namespaces[index].keys.push(key);
                     });   
-                    this.namespaces[index].isClicked = true;              
+                    this.namespaces[index].isClicked = true;   
+                    this.namespaces[index].isFetched = true;            
                 });
             },
             handleItemCreatedEvent(namespaceName, itemName) {
                 let index = this.findNamespaceIndex(namespaceName);
                 if(index != null) {
-                    this.namespaces[i].keys.push(itemName);
+                    this.namespaces[index].keys.push(itemName);
                 } else {
                     this.namespaces.push({ name: namespaceName, keys: (typeof itemName != 'undefined') ? [itemName] : [], isClicked: false });
                 }
