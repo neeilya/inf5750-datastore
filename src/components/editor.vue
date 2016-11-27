@@ -46,6 +46,10 @@
             spinner: spinner
         },
         computed: {
+            /**
+             * Calculate item value for proper json validation on server
+             * @return { String | Object }
+             */
             value() {
                 try {
                     return JSON.parse(this.item.value);
@@ -55,6 +59,28 @@
             }
         },
         methods: {
+            deleteItem() {
+                this.saving = true;
+
+                api.deleteItem(this.item.namespace, this.item.key).then(response => {
+                    this.$events.emit('notification', {
+                        type: 'success',
+                        message: 'Key has been deleted successfully',
+                        description: response.body.message
+                    });
+
+                    this.editMode = false;
+                    this.item = {};
+                }).catch(error => {
+                    this.$events.emit('notification', {
+                        type: 'error',
+                        message: 'Something went wrong',
+                        description: error.body.message
+                    });
+                }).finally(() => {
+                    this.saving = false;
+                });
+            },
             /**
              * Get promise depending on current mode
              * @returns {*|Promise.<T>}
@@ -69,6 +95,20 @@
                 }
             },
             /**
+             * Fire event dynamically
+             * depending on current mode state
+             * @return {void}
+             */
+            fireItemSavedEvent() {
+                if(this.mode === 'update') {
+                    this.$events.emit('itemUpdated', this.item.namespace, this.item.key, this.itemOld.key);
+                }
+
+                if(this.mode === 'create') {
+                    this.$events.emit('itemCreated', this.item.namespace, this.item.key);
+                }
+            },
+            /**
              * Save item in api
              * @return {void}
              */
@@ -76,13 +116,7 @@
                 this.saving = true;
 
                 this.getOperationPromise().then(response => {
-                    if(this.mode === 'update') {
-                        this.$events.emit('itemUpdated', this.item.namespace, this.item.key, this.itemOld.key);
-                    }
-
-                    if(this.mode === 'create') {
-                        this.$events.emit('itemCreated', this.item.namespace, this.item.key);
-                    }
+                    this.fireItemSavedEvent();
 
                     this.$events.emit('notification', {
                         type: 'success',
