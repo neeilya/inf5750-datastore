@@ -46,6 +46,13 @@
         },
         computed: {
             /**
+             * Calculate if current mode is create
+             * @return {Boolean}
+             */
+            createMode() {
+                return this.mode === 'create';
+            },
+            /**
              * Calculate if current mode is update
              * @return {Boolean}
              */
@@ -150,6 +157,7 @@
             handleItemClickedEvent(namespace, key) {
                 this.loading = true;
                 this.editMode = false;
+                this.item = {};
                 this.mode = 'update';
 
                 api.getItem(namespace, key).then(response => {
