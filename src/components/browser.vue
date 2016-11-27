@@ -3,7 +3,7 @@
         <md-toolbar>
             <span class="h3">Explorer</span>
         </md-toolbar>
-        <md-card-content>
+        <md-card-content class="scrollable">
             <md-list class="md-dense" v-for="namespace in namespaces">
                 <md-list-item v-on:click="getAllKeysInNamespace(namespace.name)">
                     <md-icon>folder</md-icon> <span>{{ namespace.name }}</span>
@@ -11,7 +11,7 @@
                 <template v-if="namespace.isClicked">
                     <md-list class="md-dense sublist">
                         <md-list-item v-for="key in namespace.keys" 
-                                      v-on:click="fireItemClickedEvent(key, namespace.name)"
+                                      v-on:click="fireItemClickedEvent(namespace.name, key)"
                         >
                             <md-icon>insert_drive_file</md-icon> <span>{{ key }}</span>
                         </md-list-item>
@@ -37,21 +37,17 @@
             }
         },
         created() {
-            //
             this.getAllNamespaces();
+            this.$events.on('itemCreated', this.handleItemCreatedEvent);
+            this.$events.on('itemCreated', this.handleItemUpdatedEvent);
+            this.$events.on('itemDeleted', this.handleItemDeletedEvent);
         },
         methods: {
-            // dummy methods for editor component
-            fireNamespaceClickedEvent(namespaceName) {
-                this.$events.emit('namespaceClicked', namespaceName);
-            },
-            fireItemClickedEvent(itemName, namespaceName) {
-                this.$events.emit('itemClicked', itemName, namespaceName);
+            fireItemClickedEvent(namespaceName, itemName) {
+                this.$events.emit('itemClicked', namespaceName, itemName);
             },
             fireCreateItemEvent() {
-                this.$events.emit('createNamespace');
-                // check if namespace is chosen and if then fire createItem event otherwise fire createNamespace event
-                // this.$events.emit('createItem');
+                this.$events.emit('createItem');
             },
             getAllNamespaces() {
                 api.getAllNamespaces().then(response => {
@@ -66,6 +62,7 @@
                         return i;
                     }
                 }
+                return null;
             },
             getAllKeysInNamespace(namespace) {
                 this.$events.emit('namespaceClicked', namespace);
@@ -84,6 +81,32 @@
                     });   
                     this.namespaces[index].isClicked = true;              
                 });
+            },
+            handleItemCreatedEvent(namespaceName, itemName) {
+                let index = this.findNamespaceIndex(namespaceName);
+                if(index != null) {
+                    this.namespaces[i].keys.push(itemName);
+                } else {
+                    this.namespaces.push({ name: namespaceName, keys: (typeof itemName != 'undefined') ? [itemName] : [], isClicked: false });
+                }
+            },
+            handleItemUpdatedEvent(namespaceName, itemName, oldName) {
+                let namespaceIndex = this.findNamespaceIndex(namespaceName);
+                let keyIndex = this.namespaces[namespaceIndex].keys.indexOf(oldName);
+                if (keyIndex > -1) {
+                    this.namespaces[namespaceIndex].keys[keyIndex] = itemName;
+                }
+            },
+            handleItemDeletedEvent(namespaceName, itemName) {
+                let namespaceIndex = this.findNamespaceIndex(namespaceName);
+                if(this.namespaces[namespaceIndex].keys.length == 1) {
+                    this.namespaces.splice(namespaceIndex, 1);
+                    return;
+                }
+                let keyIndex = this.namespaces[namespaceIndex].keys.indexOf(oldName);
+                if (keyIndex > -1) {
+                    this.namespaces[namespaceIndex].keys.splice(index, 1);
+                }
             }
         }
     }
@@ -108,5 +131,15 @@
 
     .md-icon {
         color: #7d7d7d;
+    }
+
+    .md-list.md-dense {
+        padding: 0;
+    }
+
+    .scrollable
+    {
+        height: 400px;
+        overflow:auto;
     }
 </style>
