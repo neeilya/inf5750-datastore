@@ -1,22 +1,32 @@
 <template>
     <md-card>
-        <div v-if="loading" class="text-center">
-            <spinner class="spinner"></spinner>
-        </div>
-        <div v-show="!loading">
+        <div>
             <md-card-content>
-                <fieldset v-bind:disabled="disabled.card">
-                    <input v-model="item.key" placeholder="Key">
-                    <textarea v-model="item.value" placeholder="Value" v-bind:disabled="disabled.value"></textarea>
+                <fieldset v-bind:disabled="! editMode || saving">
+                    <md-input-container v-if="createMode">
+                        <label>Namespace</label>
+                        <md-select v-model="namespace">
+                            <md-option v-for="namespace in namespaces" v-bind:value="namespace">{{ namespace }}</md-option>
+                            <md-option value="Other">Other</md-option>
+                        </md-select>
+                    </md-input-container>
 
-                    <div class="action-button">
-                        <md-button v-on:click="deleteButton()" v-if="visible.deleteButton" class="md-icon-button md-raised md-danger">
+                    <md-input-container v-if="namespace === 'Other'">
+                        <label>New namespace</label>
+                        <md-input v-model="namespaceOther"></md-input>
+                    </md-input-container>
+
+                    <input v-model:value="key" v-bind:disabled="updateMode" placeholder="Key">
+                    <textarea v-model="value" placeholder="Value"></textarea>
+
+                    <div v-show="editMode" class="action-button">
+                        <md-button v-on:click="deleteItem()" v-if="updateMode" class="md-icon-button md-raised md-danger">
                             <md-icon class="md-accent">delete</md-icon>
-                            <md-tooltip md-direction="top">delete item/namespace</md-tooltip>
+                            <md-tooltip md-direction="top">Delete item</md-tooltip>
                         </md-button>
-                        <md-button v-on:click="saveButton()" class="md-icon-button md-raised md-violet">
+                        <md-button v-on:click="saveItem()" class="md-icon-button md-raised md-violet">
                             <md-icon class="md-accent">done</md-icon>
-                            <md-tooltip md-direction="top">save item/namespace</md-tooltip>
+                            <md-tooltip md-direction="top">Save item</md-tooltip>
                         </md-button>
                     </div>
                 </fieldset>
@@ -32,210 +42,191 @@
     export default {
         data() {
             return {
-                visible: {
-                    deleteButton: false,
-                },
-                item: {
-                    key: null,
-                    value: null
-                },
-                current: {
-                    event: '',
-                    namespace: '',
-                    key: '',
-                    value: ''
-                },
-                disabled: {
-                    card: true,
-                    value: true
-                },
                 loading: false,
+                namespace: null,
+                namespaceOther: null,
+                value: null,
+                key: null,
+                saving: false,
+                editMode: false,
+                mode: null,
+                item: {},
+                namespaces: []
             }
         },
         created () {
-            this.$events.on('namespaceClicked', this.handleNamespaceClicked);
-            this.$events.on('itemClicked', this.handleItemClicked);
-            this.$events.on('createItem', this.handleCreateItem);
-            this.$events.on('createNamespace', this.handleCreateNamespace);
+            this.fetchNamespaces();
+
+            this.$events.on('itemClicked', this.handleItemClickedEvent);
+            this.$events.on('createItem', this.handleCreateItemEvent);
         },
         components: {
             spinner: spinner
         },
-        methods: {
+        computed: {
             /**
-             * Fire notification event
-             * @param type
-             * @param title
-             * @param message
+             * Calculate if current mode is create
+             * @return {Boolean}
              */
-            notification (type, title, message) {
-                this.$events.emit('notification', { type: type, title: title, message: message });
+            createMode() {
+                return this.mode === 'create';
             },
             /**
-             * Updates current event and keeps old values
-             * @param event
+             * Calculate if current mode is update
+             * @return {Boolean}
+             */
+            updateMode() {
+                return this.mode === 'update';
+            },
+            /**
+             * Calculate item value for proper json validation on server
+             * @return { String | Object }
+             */
+            jsonValue() {
+                try {
+                    return JSON.parse(this.value);
+                } catch(error) {
+                    return `"${ this.value }"`;
+                }
+            },
+            /**
+             * Calculate namespace
+             * @return {String}
+             */
+            finalNamespace() {
+                return this.namespaceOther ? this.namespaceOther : this.namespace;
+            }
+        },
+        methods: {
+            resetValues() {
+                this.namespace = null;
+                this.namespaceOther = null;
+                this.key = null;
+                this.value = null;
+            },
+            /**
+             * Fetch all namespaces
+             * @return {void}
+             */
+            fetchNamespaces() {
+                this.loading = true;
+
+                api.getAllNamespaces().then(response => {
+                    this.namespaces = response.data;
+                    this.loading = false;
+                });
+            },
+            /**
+             *  Delete item from server
+             *  @return {void}
+             */
+            deleteItem() {
+                this.saving = true;
+
+                api.deleteItem(this.namespace, this.key).then(response => {
+                    this.$events.emit('itemDeleted', this.namespace, this.key);
+
+                    this.$events.emit('notification', {
+                        type: 'success',
+                        message: 'Key has been deleted successfully',
+                        description: response.message
+                    });
+
+                    this.editMode = false;
+                    this.resetValues();
+                }).catch(error => {
+                    this.$events.emit('notification', {
+                        type: 'error',
+                        message: 'Something went wrong',
+                        description: error.body.message
+                    });
+                }).finally(() => {
+                    this.saving = false;
+                });
+            },
+            /**
+             * Get promise depending on current mode
+             * @returns {*|Promise.<T>}
+             */
+            getOperationPromise() {
+                if(this.mode === 'update') {
+                    return api.updateItem(this.namespace, this.key, this.jsonValue);
+                }
+
+                if(this.mode === 'create') {
+                    return api.createItem(this.finalNamespace, this.key, this.jsonValue);
+                }
+            },
+            /**
+             * Fire event dynamically
+             * depending on current mode state
+             * @return {void}
+             */
+            fireItemSavedEvent() {
+                if(this.mode === 'create') {
+                    this.$events.emit('itemCreated', this.finalNamespace, this.key);
+                }
+            },
+            /**
+             * Save item in api
+             * @return {void}
+             */
+            saveItem() {
+                this.saving = true;
+
+                this.getOperationPromise().then(response => {
+                    this.fireItemSavedEvent();
+
+                    this.$events.emit('notification', {
+                        type: 'success',
+                        message: 'Key has been saved successfully',
+                        description: response.message
+                    });
+                }).catch(error => {
+                    this.$events.emit('notification', {
+                        type: 'error',
+                        message: 'Something went wrong',
+                        description: error.body.message
+                    });
+                }).finally(() => {
+                    this.saving = false;
+                });
+            },
+            /**
+             * Handle itemClicked event
              * @param namespace
              * @param key
-             * @param value
-            */
-            updateCurrentValues (event, namespace, key, value) {
-                this.current.event = event;
-                this.current.namespace = namespace;
-                this.current.key = key;
-                this.current.value = value;
-            },
-            /**
-             * Disable/undisable card or value field
-             * @param card
-             * @param value
+             * @return {void}
              */
-             updateDisabled(card, value) {
-                this.disabled.card = card;
-                this.diabled.value = value;
-             },
-            /**
-             * Delete current selected
-             */
-            deleteButton () {
-                switch(this.current.event) {
-                    case 'namespaceClicked':
-                        api.deleteNamespace(this.current.namespace).then(response => {
-                            this.notification('success', 'Namespace have been deleted', response.body.message);
-                            // Fire event namespceDeleted(namespaceName)
-                            this.$events.emit('namespaceDeleted', this.current.namespace);
-                            this.clear();
-                        }).catch(error => {
-                            this.notification('error', 'Something went wrong', error.body.message);
-                        }).finally(() => {
-                            this.loading = false;
-                        });
-                        break;
-                    case 'itemClicked':
-                        api.deleteItem(this.current.namespace, this.item.key).then(response => {
-                            this.notification('success', 'Item have been deleted', response.body.message);
-                            // Fire event itemDeleted(itemName, namespaceName)
-                            this.$events.emit('itemDeleted', this.item.key, this.current.namespace);
-                            this.clear();
-                        }).catch(error => {
-                            this.notification('error', 'Something went wrong', error.body.message);
-                        }).finally(() => {
-                            this.loading = false;
-                        });
-                        break;
-                    default:
-                        this.notification('error', 'No active event', 'Namespace or key must be selected');
-                }
-            },
-            /**
-             * Update the data in the datastore, or save new namespace/key to the datastore
-             */
-            saveButton () {
-                switch(this.current.event) {
-                    case 'itemClicked':
-                        this.loading = true;
-                        api.updateItem(this.current.namespace, this.item.key, this.item.value).then(response => {
-                            this.notification('success', 'Value have been updated', response.body.message);
-                            // Fire event itemUpdated(itemName, oldName, namespaceName)
-                            this.$events.emit('itemDeleted', this.item.key, this.current.namespace);
-                        }).catch(error => {
-                            this.notification('error', 'Something went wrong', error.body.message);
-                        }).finally(() => {
-                            this.loading = false;
-                        });
-                        break;
-                    case 'createItem':
-                        this.loading = true;
-                        api.createItem(this.current.namespace, this.item.key, this.item.value).then(response => {
-                            this.notification('success', 'Created item', response.body.message);
-                            // Fire event itemCreated(item, namespaceName)
-                            this.$events.emit('itemCreated', this.item.key, this.current.namespace);
-                            // Update active event, and current values
-                            this.updateCurrentValues('itemClicked', this.current.namespace, this.item.key, this.item.value);
-                        }).catch(error => {
-                            this.notification('error', 'Something went wrong', error.body.message);
-                        }).finally(() => {
-                            this.loading = false;
-                        });
-                        break;
-                    case 'createNamespace':
-                        this.loading = true;
-                        api.createNamespace(this.item.key).then(response => {
-                            this.notification('success', 'Created namespace', response.body.message);
-                            // Fire event namespaceCreated(namespaceName)
-                            this.$events.emit('namespaceCreated', this.item.key, this.current.namespace);
-                            // Update active event, and current values
-                            this.updateCurrentValues('namespaceClicked', this.item.key, '','');
-                        }).catch(error => {
-                            this.notification('error', 'Something went wrong', error.body.message);
-                        }).finally(() => {
-                            this.loading = false;
-                        });
-                        break;
-                    default:
-                        this.notification('error', 'No selected event', 'There are no selected event');
-                }
-            },
-            /**
-             * Clears fields, and sets active event to 'createItem'
-             */
-            handleCreateItem(namespace) {
-                this.clear();
-                this.updateCurrentValues('createItem', 'namespace', '', '');
-                this.updateDisabled(false, false);
-            },
-            /**
-             * Clears fields, and sets active event to 'createNamespace'
-             */
-            handleCreateNamespace() {
-                this.clear();
-                this.updateCurrentValues('createNamespace', '', '', '');
-                this.updateDisabled(false, true);
-            },
-            /**
-             * Fill namespace into the item key field, set active event to 'namespaceClicked'
-             * @param namespaceName
-             */
-            handleNamespaceClicked(namespaceName) {
-                this.clear();
-                this.updateDisabled(false, true);
-                this.updateCurrentValues('namespaceClicked', namespaceName, '', '');
-                this.item.key = namespaceName;
-                this.visible.deleteButton = true;
-            },
-            /**
-             * Fetch the value of the item clicked, set active event to 'itemClicked'
-             * @param itemNAme
-             * @param namespaceName
-             */
-            handleItemClicked(itemName, namespaceName) {
+            handleItemClickedEvent(namespace, key) {
                 this.loading = true;
-                this.clear();
-                api.getItem(namespaceName, itemName).then(response => {
-                    // Update current values
-                    this.updateCurrentValues('itemClicked', namespaceName, itemName, response.body)
-                    // Update fields
-                    this.item.key = itemName;
-                    this.item.value = response.body;
-                    this.updateDisabled(false, false);
-                    // Show delete button
-                    this.visible.deleteButton = true;
-                }).catch(error => {
-                    this.$events.emit('notification', { type: 'error', message: 'error.body.message' });
+                this.editMode = false;
+                this.resetValues();
+                this.mode = 'update';
+
+                api.getItem(namespace, key).then(response => {
+                    this.key = key;
+                    this.value = response.body;
+                    this.namespace = namespace;
+                    this.editMode = true;
+                }).catch(response => {
+                    this.$events.emit('notification', {
+                        type: 'error',
+                        message: 'Something went wrong',
+                        description: response.body.message
+                    });
                 }).finally(() => {
                     this.loading = false;
                 });
             },
             /**
-             * Clears all fields and disables the editor component
+             * Handle createItem event
+             * @return {void}
              */
-            clear() {
-                // Empty fields
-                this.item.key = null;
-                this.item.value = null;
-                // Disable the editor
-                this. updateDisabled(true, false);
-                // Hide delete button
-                this.visible.deleteButton = false
+            handleCreateItemEvent() {
+                this.mode = 'create';
+                this.editMode = true;
+                this.resetValues();
             }
         }
     }

@@ -14,11 +14,6 @@
                     <md-button class="mx-0">Statistics</md-button>
                 </router-link>
             </h2>
-            <h2 class="md-title">
-                <router-link to="/about">
-                    <md-button class="mx-0">About</md-button>
-                </router-link>
-            </h2>
             <h2 class="md-title align-right">
                 <a href="/">
                     <md-button class="mx-0">

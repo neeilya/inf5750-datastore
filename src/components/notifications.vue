@@ -83,6 +83,10 @@
         right: 0;
         z-index: 2;
 
+        .md-subhead {
+            word-wrap: break-word;
+        }
+
         .md-card {
             margin-bottom: 3px;
             background-color: rgba(255,255,255,0.93);
