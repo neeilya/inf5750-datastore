@@ -47,12 +47,26 @@
             this.$events.on('itemDeleted', this.handleItemDeletedEvent);
         },
         methods: {
+            /**
+             * fire Item Clicked event
+             * @param namespaceName
+             * @param itemName
+             * @return {void}
+             */
             fireItemClickedEvent(namespaceName, itemName) {
                 this.$events.emit('itemClicked', namespaceName, itemName);
             },
+            /**
+             * fire Create Item event
+             * @return {void}
+             */
             fireCreateItemEvent() {
                 this.$events.emit('createItem');
             },
+            /**
+             * get all namesapces from API
+             * @return {Array.<T>}
+             */
             getAllNamespaces() {
                 api.getAllNamespaces().then(response => {
                     response.data.forEach(namespace => {
@@ -60,6 +74,11 @@
                     });                    
                 });
             },
+            /**
+             * find index of givev namespace in Naemspaces array
+             * @param namespace
+             * @returns {*}
+             */
             findNamespaceIndex(namespace) {
                 for(let i = 0; i < this.namespaces.length; ++i) {
                     if(this.namespaces[i].name === namespace) {
@@ -68,6 +87,11 @@
                 }
                 return null;
             },
+            /**
+             * fetch all keys of given namespace from API
+             * @param namespace
+             * @return {void}
+             */
             getAllKeysInNamespace(namespace) {
                 this.$events.emit('namespaceClicked', namespace);
                 let index = this.findNamespaceIndex(namespace);
@@ -87,6 +111,12 @@
                     this.namespaces[index].isFetched = true;            
                 });
             },
+            /**
+             * handle Item Created event
+             * @param namespaceName
+             * @param itemName
+             * @return {void}
+             */
             handleItemCreatedEvent(namespaceName, itemName) {
                 let index = this.findNamespaceIndex(namespaceName);
                 if(index != null) {
@@ -95,6 +125,12 @@
                     this.namespaces.push({ name: namespaceName, keys: [itemName], isClicked: false, isFetched: false });
                 }
             },
+            /**
+             * handle Item Deleted event
+             * @param namespaceName
+             * @param itemName
+             * @return {void}
+             */
             handleItemDeletedEvent(namespaceName, itemName) {
                 let namespaceIndex = this.findNamespaceIndex(namespaceName);
                 if(this.namespaces[namespaceIndex].keys.length === 1) {
@@ -106,6 +142,10 @@
                     this.namespaces[namespaceIndex].keys.splice(keyIndex, 1);
                 }
             },
+            /**
+             * get sorted array of namespaces, sort by name ASC or DESC
+             * @returns {Array.<T>}
+             */
             getSortedNamespaces() {
                 return this.namespaces.slice().sort((a, b) => {
                     if(this.asc) {
@@ -114,6 +154,11 @@
                     return a.name.toLowerCase() < b.name.toLowerCase() ? 1 : 0;
                 });
             },
+            **
+             * get sorted array of keys, sort by name ASC or DESC
+             * @param namespace
+             * @returns {Array.<T>}
+             */
             getSortedKeys(namespace) {
                 return namespace.keys.slice().sort((a, b) => {
                     if(this.asc) {
