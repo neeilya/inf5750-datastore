@@ -154,7 +154,7 @@
                     return a.name.toLowerCase() < b.name.toLowerCase() ? 1 : 0;
                 });
             },
-            **
+            /**
              * get sorted array of keys, sort by name ASC or DESC
              * @param namespace
              * @returns {Array.<T>}
