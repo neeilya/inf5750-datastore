@@ -3,8 +3,21 @@
         <div>
             <md-card-content>
                 <fieldset v-bind:disabled="! editMode || saving">
-                    <input v-bind:value="item.key" v-bind:disabled="updateMode" placeholder="Key">
-                    <textarea v-model="item.value" placeholder="Value"></textarea>
+                    <md-input-container v-if="createMode">
+                        <label>Namespace</label>
+                        <md-select v-model="namespace">
+                            <md-option v-for="namespace in namespaces" v-bind:value="namespace">{{ namespace }}</md-option>
+                            <md-option value="Other">Other</md-option>
+                        </md-select>
+                    </md-input-container>
+
+                    <md-input-container v-if="namespace === 'Other'">
+                        <label>New namespace</label>
+                        <md-input v-model="namespaceOther"></md-input>
+                    </md-input-container>
+
+                    <input v-model:value="key" v-bind:disabled="updateMode" placeholder="Key">
+                    <textarea v-model="value" placeholder="Value"></textarea>
 
                     <div v-show="editMode" class="action-button">
                         <md-button v-on:click="deleteItem()" v-if="updateMode" class="md-icon-button md-raised md-danger">
@@ -30,6 +43,10 @@
         data() {
             return {
                 loading: false,
+                namespace: null,
+                namespaceOther: null,
+                value: null,
+                key: null,
                 saving: false,
                 editMode: false,
                 mode: null,
@@ -38,6 +55,8 @@
             }
         },
         created () {
+            this.fetchNamespaces();
+
             this.$events.on('itemClicked', this.handleItemClickedEvent);
             this.$events.on('createItem', this.handleCreateItemEvent);
         },
@@ -63,15 +82,40 @@
              * Calculate item value for proper json validation on server
              * @return { String | Object }
              */
-            value() {
+            jsonValue() {
                 try {
-                    return JSON.parse(this.item.value);
+                    return JSON.parse(this.value);
                 } catch(error) {
-                    return `"${ this.item.value }"`;
+                    return `"${ this.value }"`;
                 }
+            },
+            /**
+             * Calculate namespace
+             * @return {String}
+             */
+            finalNamespace() {
+                return this.namespaceOther ? this.namespaceOther : this.namespace;
             }
         },
         methods: {
+            resetValues() {
+                this.namespace = null;
+                this.namespaceOther = null;
+                this.key = null;
+                this.value = null;
+            },
+            /**
+             * Fetch all namespaces
+             * @return {void}
+             */
+            fetchNamespaces() {
+                this.loading = true;
+
+                api.getAllNamespaces().then(response => {
+                    this.namespaces = response.data;
+                    this.loading = false;
+                });
+            },
             /**
              *  Delete item from server
              *  @return {void}
@@ -79,17 +123,17 @@
             deleteItem() {
                 this.saving = true;
 
-                api.deleteItem(this.item.namespace, this.item.key).then(response => {
-                    this.$events.emit('itemDeleted', this.item.namespace, this.item.key);
+                api.deleteItem(this.namespace, this.key).then(response => {
+                    this.$events.emit('itemDeleted', this.namespace, this.key);
 
                     this.$events.emit('notification', {
                         type: 'success',
                         message: 'Key has been deleted successfully',
-                        description: response.body.message
+                        description: response.message
                     });
 
                     this.editMode = false;
-                    this.item = {};
+                    this.resetValues();
                 }).catch(error => {
                     this.$events.emit('notification', {
                         type: 'error',
@@ -106,11 +150,11 @@
              */
             getOperationPromise() {
                 if(this.mode === 'update') {
-                    return api.updateItem(this.item.namespace, this.item.key, this.value);
+                    return api.updateItem(this.namespace, this.key, this.jsonValue);
                 }
 
                 if(this.mode === 'create') {
-                    return api.createItem(this.item.namespace, this.item.key, this.value);
+                    return api.createItem(this.finalNamespace, this.key, this.jsonValue);
                 }
             },
             /**
@@ -120,7 +164,7 @@
              */
             fireItemSavedEvent() {
                 if(this.mode === 'create') {
-                    this.$events.emit('itemCreated', this.item.namespace, this.item.key);
+                    this.$events.emit('itemCreated', this.finalNamespace, this.key);
                 }
             },
             /**
@@ -136,7 +180,7 @@
                     this.$events.emit('notification', {
                         type: 'success',
                         message: 'Key has been saved successfully',
-                        description: response.body.message
+                        description: response.message
                     });
                 }).catch(error => {
                     this.$events.emit('notification', {
@@ -157,13 +201,13 @@
             handleItemClickedEvent(namespace, key) {
                 this.loading = true;
                 this.editMode = false;
-                this.item = {};
+                this.resetValues();
                 this.mode = 'update';
 
                 api.getItem(namespace, key).then(response => {
-                    this.item.key = key;
-                    this.item.value = response.body;
-                    this.item.namespace = namespace;
+                    this.key = key;
+                    this.value = response.body;
+                    this.namespace = namespace;
                     this.editMode = true;
                 }).catch(response => {
                     this.$events.emit('notification', {
@@ -182,7 +226,7 @@
             handleCreateItemEvent() {
                 this.mode = 'create';
                 this.editMode = true;
-                this.item = {};
+                this.resetValues();
             }
         }
     }
