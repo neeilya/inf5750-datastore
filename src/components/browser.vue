@@ -87,7 +87,7 @@
                 if(index != null) {
                     this.namespaces[index].keys.push(itemName);
                 } else {
-                    this.namespaces.push({ name: namespaceName, keys: (typeof itemName != 'undefined') ? [itemName] : [], isClicked: false });
+                    this.namespaces.push({ name: namespaceName, keys: (typeof itemName != 'undefined') ? [itemName] : [], isClicked: false, isFetched: false });
                 }
             },
             handleItemDeletedEvent(namespaceName, itemName) {
