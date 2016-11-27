@@ -103,7 +103,23 @@
     }
 
     .md-button.md-danger {
-        background-color: #EF5350 !important;
+        background-color: #EF5350;
+
+        &.md-button:hover:not([disabled]).md-raised,
+        &.md-button.md-icon-button:not([disabled]):hover,
+        &:hover {
+            background-color: #da4d4a;
+        }
+    }
+
+    .md-button.md-violet {
+        background-color: #6639b6;
+
+        &.md-button:hover:not([disabled]).md-raised,
+        &.md-button.md-icon-button:not([disabled]):hover,
+        &:hover {
+            background-color: #5e34a7;
+        }
     }
 
     [v-cloak] {
@@ -112,10 +128,6 @@
 
     .md-card .md-toolbar {
         padding: 15px;
-    }
-
-    .md-button.md-icon-button:not([disabled]):hover {
-        background-color: rgba(0,0,0,.12);
     }
 
     fieldset {
@@ -137,7 +149,14 @@
             }
 
             button,
-            .md-button {
+            .md-button,
+            .md-button.md-danger.md-button:hover:not([disabled]).md-raised,
+            .md-button.md-danger.md-button.md-icon-button:not([disabled]):hover,
+            .md-button.md-danger:hover,
+            .md-button.md-violet.md-button:hover:not([disabled]).md-raised,
+            .md-button.md-violet.md-button.md-icon-button:not([disabled]):hover,
+            .md-button.md-violet:hover,
+            .md-button.md-danger {
                 background-color: rgba(0,0,0,.12);
             }
         }
