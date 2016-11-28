@@ -7,7 +7,10 @@
             <md-card>
                 <md-toolbar>
                     <span class="h3">Statistics</span>
-                    <md-button v-on:click="clearCache()" class="mx-0 my-0 md-raised md-warn">clear cache</md-button>
+                    <md-button v-on:click="clearCache(); refresh(); fetchAndPrepareStatistics()" class="md-icon-button md-raised refresh-button">
+                        <md-icon class="md-accent">refresh</md-icon>
+                    </md-button>
+                </md-toolbar>
                 </md-toolbar>
                 <md-card-content>
                     <div class="flex">
@@ -65,28 +68,38 @@
             }
         },
         created() {
-            this.fetch(() => {
-                this.calculateNamespacesSizes();
-                this.calculateLargestItemSize();
-                this.findLastUpdatedKey();
-                this.showMainChart();
-            });
+            this.fetchAndPrepareStatistics();
         },
         components: {
             spinner: spinner
         },
         methods: {
             /**
+             * Refresh data
+             * @return {void}
+             */
+            refresh() {
+                this.namespaces = [];
+                this.cached_at = null;
+            },
+            /**
+             * Fetch and prepare statistics
+             * @return {void}
+             */
+            fetchAndPrepareStatistics() {
+                this.fetch(() => {
+                    this.calculateNamespacesSizes();
+                    this.calculateLargestItemSize();
+                    this.findLastUpdatedKey();
+                    this.showMainChart();
+                });
+            },
+            /**
              * Clear cached data
              * @return {void}
              */
             clearCache() {
                 store.remove('cachedDataStoreStatistics');
-
-                this.$events.emit('notification', {
-                    type: 'success',
-                    message: 'Cache has been cleared successfully'
-                })
             },
             /**
              * Calculate largest item size
@@ -145,6 +158,7 @@
              * @return {undefined}
              */
             fetch(callback) {
+                this.initializing = true;
                 let cached = store.get('cachedDataStoreStatistics');
 
                 if(cached !== undefined && cached !== null) {
@@ -250,10 +264,16 @@
 </script>
 
 <style lang="sass" scoped>
+    .md-theme-default .md-toolbar,
+    .md-theme-default.md-toolbar {
+        padding: 10px 15px;
+    }
+
     .md-toolbar {
-        .md-button {
-            position: absolute;
-            right: 15px;
+        .md-button.refresh-button {
+            box-shadow: none;
+            margin: 0;
+            margin-left: auto;
         }
     }
 
