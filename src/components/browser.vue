@@ -75,7 +75,7 @@
                 });
             },
             /**
-             * find index of givev namespace in Naemspaces array
+             * find index of given namespace in Namespace array
              * @param namespace
              * @returns {*}
              */
@@ -122,7 +122,7 @@
                 if(index != null) {
                     this.namespaces[index].keys.push(itemName);
                 } else {
-                    this.namespaces.push({ name: namespaceName, keys: [itemName], isClicked: false, isFetched: false });
+                    this.namespaces.push({ name: namespaceName, keys: [], isClicked: false, isFetched: false });
                 }
             },
             /**
