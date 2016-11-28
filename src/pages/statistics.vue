@@ -7,7 +7,12 @@
             <md-card>
                 <md-toolbar>
                     <span class="h3">Statistics</span>
-                    <md-button v-on:click="clearCache()" class="mx-0 my-0 md-raised md-warn">clear cache</md-button>
+
+                    <span class="actions">Last cached {{ cached_at | moment("from") }}</span>
+                    <md-button v-on:click="clearCache(); refresh(); fetchAndPrepareStatistics()" class="md-icon-button md-raised refresh-button">
+                        <md-icon class="md-accent">refresh</md-icon>
+                    </md-button>
+                </md-toolbar>
                 </md-toolbar>
                 <md-card-content>
                     <div class="flex">
@@ -53,6 +58,7 @@
     import spinner from 'components/assets/spinner.vue';
     import api from 'services/api';
     import store from 'store';
+    import randomColor from 'random-material-color';
 
     export default {
         data() {
@@ -65,28 +71,66 @@
             }
         },
         created() {
-            this.fetch(() => {
-                this.calculateNamespacesSizes();
-                this.calculateLargestItemSize();
-                this.findLastUpdatedKey();
-                this.showMainChart();
-            });
+            this.fetchAndPrepareStatistics();
         },
         components: {
             spinner: spinner
         },
         methods: {
             /**
+             * Generate material colors for each namespace
+             * @return {Array}
+             */
+            generateColorsForNamespaces() {
+                let colors = [];
+
+                this.namespaces.forEach(() => {
+                    colors.push(this.getUniqueColor(colors));
+                });
+
+                return colors;
+            },
+            /**
+             * Recursive function for generating truly random color
+             * depending on existing colors in the argument array
+             * @param colors
+             * @return {String}
+             */
+            getUniqueColor(colors) {
+                let color = randomColor.getColor();
+
+                if(colors.indexOf(color) > -1) {
+                    return this.getUniqueColor(colors);
+                } else {
+                    return color;
+                }
+            },
+            /**
+             * Refresh data
+             * @return {void}
+             */
+            refresh() {
+                this.namespaces = [];
+                this.cached_at = null;
+            },
+            /**
+             * Fetch and prepare statistics
+             * @return {void}
+             */
+            fetchAndPrepareStatistics() {
+                this.fetch(() => {
+                    this.calculateNamespacesSizes();
+                    this.calculateLargestItemSize();
+                    this.findLastUpdatedKey();
+                    this.showMainChart();
+                });
+            },
+            /**
              * Clear cached data
              * @return {void}
              */
             clearCache() {
                 store.remove('cachedDataStoreStatistics');
-
-                this.$events.emit('notification', {
-                    type: 'success',
-                    message: 'Cache has been cleared successfully'
-                })
             },
             /**
              * Calculate largest item size
@@ -145,6 +189,7 @@
              * @return {undefined}
              */
             fetch(callback) {
+                this.initializing = true;
                 let cached = store.get('cachedDataStoreStatistics');
 
                 if(cached !== undefined && cached !== null) {
@@ -219,14 +264,7 @@
                             datasets: [{
                                 label: 'Size in bytes',
                                 data: this.namespaces.map(namespace => namespace.sizeInBytes),
-                                backgroundColor: [
-                                    'rgba(255, 99, 132, 1)',
-                                    'rgba(54, 162, 235, 1)',
-                                    'rgba(255, 206, 86, 1)',
-                                    'rgba(75, 192, 192, 1)',
-                                    'rgba(153, 102, 255, 1)',
-                                    'rgba(255, 159, 64, 1)'
-                                ],
+                                backgroundColor: this.generateColorsForNamespaces(),
                                 borderWidth: 0
                             }]
                         },
@@ -250,10 +288,19 @@
 </script>
 
 <style lang="sass" scoped>
+    .md-theme-default .md-toolbar,
+    .md-theme-default.md-toolbar {
+        padding: 10px 15px;
+    }
+
     .md-toolbar {
-        .md-button {
-            position: absolute;
-            right: 15px;
+        .actions {
+            margin: 0;
+            margin-left: auto;
+        },
+        .md-button.refresh-button {
+            box-shadow: none;
+            margin: 0;
         }
     }
 
