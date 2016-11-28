@@ -1,7 +1,10 @@
 <template>
     <md-card>
         <div>
-            <md-card-content>
+            <div v-if="loading" class="overlay">
+                <spinner class="spinner"></spinner>
+            </div>
+            <md-card-content v-if="!loading">
                 <fieldset v-bind:disabled="! editMode || saving">
                     <md-input-container v-if="createMode">
                         <label>Namespace</label>
@@ -278,6 +281,12 @@
         background-color: #6639b6;
     }
     .spinner {
-        margin-top: 50px;
+        position: relative;
+    }
+    .overlay {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
     }
 </style>
