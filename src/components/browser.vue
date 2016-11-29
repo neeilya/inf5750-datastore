@@ -1,14 +1,14 @@
 <template>
     <md-card>
         <md-toolbar>
-            <span class="h3">Explorer</span>
+            <md-icon>search</md-icon><input class="search-input" type="text" v-model:value="searchKey" placeholder="search namespace">
             <div class="toggle-asc">
                 <span class="h3">Sort (asc)</span> <md-switch v-model="asc" class="md-warn"></md-switch>
             </div>
             
         </md-toolbar>
         <md-card-content class="scrollable">
-            <md-list class="md-dense" v-for="namespace in getSortedNamespaces()">
+            <md-list class="md-dense" v-for="namespace in getSortedAndFilteredNamespaces()">
                 <md-list-item v-on:click="getAllKeysInNamespace(namespace.name)">
                     <md-icon>folder</md-icon> <span>{{ namespace.name }}</span>
                 </md-list-item>
@@ -38,6 +38,7 @@
         data() {
             return {
                 asc: true,
+                searchKey: '',
                 namespaces: [],
             }
         },
@@ -64,7 +65,7 @@
                 this.$events.emit('createItem');
             },
             /**
-             * get all namesapces from API
+             * get all namespaces from API
              * @return {Array.<T>}
              */
             getAllNamespaces() {
@@ -146,13 +147,20 @@
              * get sorted array of namespaces, sort by name ASC or DESC
              * @returns {Array.<T>}
              */
-            getSortedNamespaces() {
-                return this.namespaces.slice().sort((a, b) => {
+            getSortedAndFilteredNamespaces() {
+                let sortedAndFilteredNamespaces = this.namespaces.slice().sort((a, b) => {
                     if(this.asc) {
                         return a.name.toLowerCase() > b.name.toLowerCase() ? 1 : 0;
                     }
                     return a.name.toLowerCase() < b.name.toLowerCase() ? 1 : 0;
                 });
+                if (this.searchKey !== '') {
+                    var self = this;
+                    return sortedAndFilteredNamespaces.filter((namespace) => {
+                        return namespace.name.toLowerCase().indexOf(this.searchKey.toLowerCase()) > -1;
+                    });
+                }
+                return sortedAndFilteredNamespaces;
             },
             /**
              * get sorted array of keys, sort by name ASC or DESC
@@ -209,4 +217,23 @@
         position: absolute;
         right: 15px;
     }
+
+    .search-input {
+        background: transparent;
+        border: none;
+        color: rgba(255, 255, 255, .87);
+        font-size: 120%;
+        border-bottom: 2px solid rgba(255, 255, 255, .87);
+        width: 50%;
+    }
+
+    .search-input:focus {
+        outline: none;
+    }
+
+    .md-toolbar .md-icon {
+        margin: 0px 2px 0px 5px;
+        color: rgba(255, 255, 255, .87);
+    }
+
 </style>

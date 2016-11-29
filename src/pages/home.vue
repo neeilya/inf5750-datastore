@@ -1,6 +1,6 @@
 <template>
     <div class="flex">
-        <div class="col-4">
+        <div class="col-8">
             <browser></browser>
         </div>
         <div class="col-8">

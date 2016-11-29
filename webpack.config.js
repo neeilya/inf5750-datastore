@@ -16,7 +16,8 @@ module.exports = {
         new CleanWebpackPlugin(['build']),
         new CopyWebpackPlugin([
             { from: './index.html', to: './build/' },
-            { from: './assets', to: './build/assets'}
+            { from: './assets', to: './build/assets'},
+            { from: './manifest.webapp', to: './build/'}
         ])
     ],
     module: {

@@ -1,0 +1,15 @@
+{
+    "version": "0.1.0",
+    "name": "Data Store Managaer",
+    "description": "App for easy access to Data Store",
+    "launch_path": "build/index.html",
+    "icons": {
+        "48": "assets/img/favicon.png"
+    },
+    "default_locale": "en",
+    "activities": {
+        "dhis": {
+            "href": ".."
+        }
+    }
+}
