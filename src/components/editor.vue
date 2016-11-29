@@ -1,30 +1,22 @@
 <template>
     <md-card>
         <div>
+            <div v-if="loading" class="overlay">
+                <spinner class="spinner"></spinner>
+            </div>
             <md-card-content>
-                <fieldset v-bind:disabled="! editMode || saving">
-                    <md-input-container v-if="createMode">
-                        <label>Namespace</label>
-                        <md-select v-model="namespace">
-                            <md-option v-for="namespace in namespaces" v-bind:value="namespace">{{ namespace }}</md-option>
-                            <md-option value="Other">Other</md-option>
-                        </md-select>
-                    </md-input-container>
-
-                    <md-input-container v-if="namespace === 'Other'">
-                        <label>New namespace</label>
-                        <md-input v-model="namespaceOther"></md-input>
-                    </md-input-container>
-
-                    <input v-model:value="key" v-bind:disabled="updateMode" placeholder="Key">
-                    <textarea v-model="value" placeholder="Value"></textarea>
+                <fieldset v-bind:disabled="!editMode || loading">
+                    <input style="font-size:25px" v-model:value="namespace" v-bind:disabled="updateMode" placeholder="Namespace">
+                    <hr>
+                    <input v-model:value="key" v-bind:disabled="updateMode || namespaceClicked" placeholder="Key">
+                    <textarea v-model="value" placeholder="Value" v-bind:disabled="namespaceClicked"></textarea>
 
                     <div v-show="editMode" class="action-button">
                         <md-button v-on:click="deleteItem()" v-if="updateMode" class="md-icon-button md-raised md-danger">
                             <md-icon class="md-accent">delete</md-icon>
                             <md-tooltip md-direction="top">Delete item</md-tooltip>
                         </md-button>
-                        <md-button v-on:click="saveItem()" class="md-icon-button md-raised md-violet">
+                        <md-button v-on:click="saveItem()" v-if="!namespaceClicked" class="md-icon-button md-raised md-violet">
                             <md-icon class="md-accent">done</md-icon>
                             <md-tooltip md-direction="top">Save item</md-tooltip>
                         </md-button>
@@ -44,19 +36,15 @@
             return {
                 loading: false,
                 namespace: null,
-                namespaceOther: null,
                 value: null,
                 key: null,
-                saving: false,
                 editMode: false,
                 mode: null,
-                item: {},
-                namespaces: []
+                namespaceClicked: false
             }
         },
         created () {
-            this.fetchNamespaces();
-
+            this.$events.on('namespaceClicked', this.handleNamespaceClickedEvent);
             this.$events.on('itemClicked', this.handleItemClickedEvent);
             this.$events.on('createItem', this.handleCreateItemEvent);
         },
@@ -88,61 +76,63 @@
                 } catch(error) {
                     return `"${ this.value }"`;
                 }
-            },
-            /**
-             * Calculate namespace
-             * @return {String}
-             */
-            finalNamespace() {
-                return this.namespaceOther ? this.namespaceOther : this.namespace;
             }
         },
         methods: {
             resetValues() {
-                this.namespace = null;
-                this.namespaceOther = null;
+                this.namespaceClicked ? this.namespaceClicked = false : this.namespace = null;
                 this.key = null;
                 this.value = null;
-            },
-            /**
-             * Fetch all namespaces
-             * @return {void}
-             */
-            fetchNamespaces() {
-                this.loading = true;
-
-                api.getAllNamespaces().then(response => {
-                    this.namespaces = response.data;
-                    this.loading = false;
-                });
             },
             /**
              *  Delete item from server
              *  @return {void}
              */
             deleteItem() {
-                this.saving = true;
+                this.loading = true;
+                if (this.namespaceClicked) {
+                    api.deleteNamespace(this.namespace).then(response => {
+                        this.$events.emit('namespaceDeleted', this.namespace);
 
-                api.deleteItem(this.namespace, this.key).then(response => {
-                    this.$events.emit('itemDeleted', this.namespace, this.key);
+                        this.$events.emit('notification', {
+                            type: 'success',
+                            message: 'Namespace has been deleted successfully',
+                            description: response.message
+                        });
 
-                    this.$events.emit('notification', {
-                        type: 'success',
-                        message: 'Key has been deleted successfully',
-                        description: response.message
+                        this.editMode = false;
+                        this.resetValues();
+                    }).catch(error => {
+                        this.$events.emit('notification', {
+                            type: 'error',
+                            message: 'Something went wrong',
+                            description: error.body.message
+                        });
+                    }).finally(() => {
+                        this.loading = false;
                     });
+                } else {
+                    api.deleteItem(this.namespace, this.key).then(response => {
+                        this.$events.emit('itemDeleted', this.namespace, this.key);
 
-                    this.editMode = false;
-                    this.resetValues();
-                }).catch(error => {
-                    this.$events.emit('notification', {
-                        type: 'error',
-                        message: 'Something went wrong',
-                        description: error.body.message
+                        this.$events.emit('notification', {
+                            type: 'success',
+                            message: 'Key has been deleted successfully',
+                            description: response.message
+                        });
+
+                        this.editMode = false;
+                        this.resetValues();
+                    }).catch(error => {
+                        this.$events.emit('notification', {
+                            type: 'error',
+                            message: 'Something went wrong',
+                            description: error.body.message
+                        });
+                    }).finally(() => {
+                        this.loading = false;
                     });
-                }).finally(() => {
-                    this.saving = false;
-                });
+                }
             },
             /**
              * Get promise depending on current mode
@@ -154,7 +144,7 @@
                 }
 
                 if(this.mode === 'create') {
-                    return api.createItem(this.finalNamespace, this.key, this.jsonValue);
+                    return api.createItem(this.namespace, this.key, this.jsonValue);
                 }
             },
             /**
@@ -164,7 +154,7 @@
              */
             fireItemSavedEvent() {
                 if(this.mode === 'create') {
-                    this.$events.emit('itemCreated', this.finalNamespace, this.key);
+                    this.$events.emit('itemCreated', this.namespace, this.key);
                 }
             },
             /**
@@ -172,16 +162,20 @@
              * @return {void}
              */
             saveItem() {
-                this.saving = true;
+                this.loading = true;
 
                 this.getOperationPromise().then(response => {
                     this.fireItemSavedEvent();
 
                     this.$events.emit('notification', {
                         type: 'success',
-                        message: 'Key has been saved successfully',
+                        message: 'Saved successfully',
                         description: response.message
                     });
+
+                    this.editMode = true;
+                    this.mode = 'update';
+
                 }).catch(error => {
                     this.$events.emit('notification', {
                         type: 'error',
@@ -189,7 +183,7 @@
                         description: error.body.message
                     });
                 }).finally(() => {
-                    this.saving = false;
+                    this.loading = false;
                 });
             },
             /**
@@ -220,13 +214,27 @@
                 });
             },
             /**
+             * Handle namespaceClicked event
+             * @param namespace
+             * @return {void}
+             */
+            handleNamespaceClickedEvent(namespace) {
+                this.editMode = false;
+                this.resetValues();
+                this.namespaceClicked = true;
+                this.namespace = namespace;
+                this.mode = 'update';
+                this.editMode = true;
+                this.updateMode = true;
+            },
+            /**
              * Handle createItem event
              * @return {void}
              */
             handleCreateItemEvent() {
+                this.resetValues();
                 this.mode = 'create';
                 this.editMode = true;
-                this.resetValues();
             }
         }
     }
@@ -278,6 +286,12 @@
         background-color: #6639b6;
     }
     .spinner {
-        margin-top: 50px;
+        position: relative;
+    }
+    .overlay {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
     }
 </style>
