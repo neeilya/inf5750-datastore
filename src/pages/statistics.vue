@@ -13,7 +13,6 @@
                         <md-icon class="md-accent">refresh</md-icon>
                     </md-button>
                 </md-toolbar>
-                </md-toolbar>
                 <md-card-content>
                     <div class="flex">
                         <div class="col-6">
