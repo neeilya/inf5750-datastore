@@ -17,7 +17,7 @@ This repository hosts source code the group project of Open Source Development c
 
 ## Development
 - Install webpack-dev-server globally `sudo npm install -G webpack-dev-server`
-- Adjust api base url in config.js file (../project-root/src)
+- Adjust base url in config.js file (../project-root/src)
 - Add next piece of code to `../project-root/src/app.js` file ```Vue.http.headers.common['Authorization'] = `Basic ${btoa('admin:district')}\`;```
 - Go to project root
 - Run `npm run dev`

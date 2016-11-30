@@ -15,7 +15,7 @@
                 </router-link>
             </h2>
             <h2 class="md-title align-right">
-                <a href="/">
+                <a v-bind:href="base_url">
                     <md-button class="mx-0">
                         <img class="logo" src="assets/img/dhis2.png">
                     </md-button>
@@ -24,6 +24,18 @@
         </div>
     </md-toolbar>
 </template>
+
+<script type="text/babel">
+    import config from 'config';
+
+    export default {
+        computed: {
+            base_url() {
+                return config.base_url
+            }
+        }
+    }
+</script>
 
 <style scoped>
     .md-button {
