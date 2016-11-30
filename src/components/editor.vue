@@ -15,7 +15,7 @@
                             <label>Namespace</label>
                             <md-select v-model="namespace">
                                 <md-option value="Create new namespace">Create new namespace</md-option>
-                                <md-option v-for="namespace in namespaces" v-bind:value="namespace">{{ namespace }}</md-option>
+                                <md-option v-for="namespace in orderedNamespaces" v-bind:value="namespace">{{ namespace }}</md-option>
                             </md-select>
                         </md-input-container>
 
@@ -116,6 +116,15 @@
              */
             finalNamespace() {
                 return this.namespaceNew ? this.namespaceNew : this.namespace;
+            },
+            /**
+             * Sort namespaces alphabetically
+             * @return {Array}
+             */
+            orderedNamespaces() {
+                return this.namespaces.slice().sort((a, b) => {
+                    return a.toLowerCase() > b.toLowerCase();
+                });
             }
         },
         methods: {
@@ -154,8 +163,12 @@
              */
             deleteNamespace() {
                 api.deleteNamespace(this.namespace).then(response => {
+                    this.namespaces.splice(this.namespaces.indexOf(this.namespace), 1);
+
                     this.$events.emit('namespaceDeleted', this.namespace);
+
                     this.resetValues();
+
                     this.$events.emit('notification', {
                         type: 'success',
                         message: 'Namespace has been deleted successfully',
@@ -229,6 +242,10 @@
 
                 this.getOperationPromise().then(response => {
                     this.fireItemSavedEvent();
+
+                    if(this.createMode) {
+                        this.namespaces.push(this.namespaceNew);
+                    }
 
                     this.$events.emit('notification', {
                         type: 'success',
