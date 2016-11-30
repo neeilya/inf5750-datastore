@@ -9,13 +9,15 @@
         </md-toolbar>
         <md-card-content class="scrollable">
             <md-list class="md-dense" v-for="namespace in getSortedAndFilteredNamespaces()">
-                <md-list-item v-on:click="getAllKeysInNamespace(namespace.name)">
+                <md-list-item v-on:click="select(namespace.name); getAllKeysInNamespace(namespace.name)"
+                              v-bind:class="{ active: ! current.isKey && current.namespace === namespace.name }">
                     <md-icon>folder</md-icon> <span>{{ namespace.name }}</span>
                 </md-list-item>
                 <template v-if="namespace.isClicked">
                     <md-list class="md-dense sublist">
                         <md-list-item v-for="key in getSortedKeys(namespace)" 
-                                      v-on:click="fireItemClickedEvent(namespace.name, key)"
+                                      v-on:click="select(namespace.name, key, true); fireItemClickedEvent(namespace.name, key)"
+                                      v-bind:class="{ active: current.isKey && current.key === key && current.namespace === namespace.name }"
                         >
                             <md-icon>insert_drive_file</md-icon> <span>{{ key }}</span>
                         </md-list-item>
@@ -40,6 +42,7 @@
                 asc: true,
                 searchKey: '',
                 namespaces: [],
+                current: {}
             }
         },
         created() {
@@ -185,6 +188,15 @@
                     return a.toLowerCase() < b.toLowerCase() ? 1 : 0;
                 });
             },
+            select(namespace, key = null, isKey = null) {
+                this.current.isKey = false;
+                if(isKey === true) {
+                    this.current.isKey = true;
+                }
+                this.current.namespace = namespace;
+                this.current.key = key;
+                this.$forceUpdate();
+            }
         }
     }
 </script>
@@ -243,6 +255,10 @@
     .md-toolbar .md-icon {
         margin: 0px 2px 0px 5px;
         color: rgba(255, 255, 255, .87);
+    }
+
+    .md-list-item.active {
+        background-color: #dedede;
     }
 
 </style>
