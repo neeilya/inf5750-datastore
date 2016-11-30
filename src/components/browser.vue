@@ -121,9 +121,9 @@
              */
             handleItemCreatedEvent(namespaceName, itemName) {
                 let index = this.findNamespaceIndex(namespaceName);
-                if(index != null) {
+                if(index !== null && this.namespaces[index].isFetched === true) {
                     this.namespaces[index].keys.push(itemName);
-                } else {
+                } else if(index === null) {
                     this.namespaces.push({ name: namespaceName, keys: [], isClicked: false, isFetched: false });
                 }
             },
