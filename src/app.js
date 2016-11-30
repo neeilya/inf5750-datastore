@@ -24,8 +24,6 @@ Vue.prototype.$events = new EventEmitter;
 Vue.http.headers.common['Accept'] = 'application/json';
 Vue.http.headers.common['Content-Type'] = 'application/json';
 Vue.http.headers.common['X-Requested-With'] = 'XMLHttpRequest';
-// For development just use admin:district
-Vue.http.headers.common['Authorization'] = `Basic ${btoa('admin:district')}`;
 
 // Registering global theme
 Vue.material.theme.register('default', {
