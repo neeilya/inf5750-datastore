@@ -46,6 +46,7 @@
             this.getAllNamespaces();
             this.$events.on('itemCreated', this.handleItemCreatedEvent);
             this.$events.on('itemDeleted', this.handleItemDeletedEvent);
+            this.$events.on('namespaceDeleted', this.handleNamespaceDeletedEvent);
         },
         methods: {
             /**
@@ -142,6 +143,15 @@
                 if (keyIndex > -1) {
                     this.namespaces[namespaceIndex].keys.splice(keyIndex, 1);
                 }
+            },
+            /**
+             * handle Namespace Deleted event
+             * @param namespaceName
+             * @return {void}
+             */
+            handleNamespaceDeletedEvent(namespaceName) {
+                let namespaceIndex = this.findNamespaceIndex(namespaceName);
+                this.namespaces.splice(namespaceIndex, 1);
             },
             /**
              * get sorted array of namespaces, sort by name ASC or DESC
