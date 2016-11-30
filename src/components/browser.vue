@@ -1,9 +1,9 @@
 <template>
     <md-card>
         <md-toolbar>
-            <md-icon>search</md-icon><input class="search-input" type="text" v-model:value="searchKey" placeholder="search namespace">
+            <input class="search-input" type="text" v-model="searchKey" placeholder="Search namespace here">
             <div class="toggle-asc">
-                <span class="h3">Sort (asc)</span> <md-switch v-model="asc" class="md-warn"></md-switch>
+                <span class="h3">ASC</span> <md-switch v-model="asc" class="md-warn"></md-switch>
             </div>
             
         </md-toolbar>
@@ -223,7 +223,6 @@
         border: none;
         color: rgba(255, 255, 255, .87);
         font-size: 120%;
-        border-bottom: 2px solid rgba(255, 255, 255, .87);
         width: 50%;
     }
 
