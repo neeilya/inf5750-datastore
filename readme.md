@@ -24,3 +24,12 @@ This repository hosts source code the group project of Open Source Development c
   - Login to https://play.dhis2.org/demo
   - Go to apps -> System Settings -> Access
   - Check if http://localhost:8080 is in the list
+
+## Tools and libraries used
+- [VueJs 2.0](https://github.com/vuejs/vue) - MVVM JavaScript library
+- [VueMaterial](https://github.com/marcosmoura/vue-material) - material theme for Vue
+- [Webpack](https://github.com/webpack/webpack) - module bundler
+- [Babel](https://github.com/babel/babel-loader) - ES6 webpack loader
+- [Chart.js](https://github.com/chartjs/Chart.js) - chart library
+- [Store.js](https://github.com/marcuswestin/store.js/) - localStorage wrapper
+- [Sass](https://github.com/sass/sass) - styles preprocessor
