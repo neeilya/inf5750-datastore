@@ -1,9 +1,9 @@
 <template>
     <div class="flex">
-        <div class="col-8">
+        <div class="col browser-container">
             <browser></browser>
         </div>
-        <div class="col-8">
+        <div class="col editor-container">
             <editor></editor>
         </div>
     </div>
@@ -30,6 +30,18 @@
 </script>
 
 <style scoped>
+    .col {
+        padding: 0 10px;
+    }
+    .browser-container {
+        width: 50%;
+        max-width: 375px;
+    }
+
+    .editor-container {
+        width: calc(100% - 375px);
+        padding-right: 0;
+    }
     .md-card {
         min-height: 500px;
     }
