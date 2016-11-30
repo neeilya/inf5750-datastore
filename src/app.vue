@@ -165,4 +165,8 @@
     .md-option {
         padding: 0 16px;
     }
+
+    input:disabled, textarea:disabled {
+        cursor: not-allowed;
+    }
 </style>

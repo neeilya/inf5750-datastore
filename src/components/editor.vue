@@ -6,24 +6,35 @@
             </div>
             <md-card-content v-if="!loading">
                 <fieldset v-bind:disabled="! editMode || saving">
-                    <md-input-container v-if="createMode">
-                        <label>Namespace</label>
-                        <md-select v-model="namespace">
-                            <md-option v-for="namespace in namespaces" v-bind:value="namespace">{{ namespace }}</md-option>
-                            <md-option value="Other">Other</md-option>
-                        </md-select>
-                    </md-input-container>
+                    <template v-if="showNamespace">
+                        <md-input-container v-if="(editMode || deleteNamespaceMode) && ! createMode">
+                            <label>Namespace</label>
+                            <md-input v-bind:value="namespace" disabled></md-input>
+                        </md-input-container>
+                        <md-input-container v-if="createMode">
+                            <label>Namespace</label>
+                            <md-select v-model="namespace">
+                                <md-option value="Create new namespace">Create new namespace</md-option>
+                                <md-option v-for="namespace in namespaces" v-bind:value="namespace">{{ namespace }}</md-option>
+                            </md-select>
+                        </md-input-container>
 
-                    <md-input-container v-if="namespace === 'Other'">
-                        <label>New namespace</label>
-                        <md-input v-model="namespaceOther"></md-input>
-                    </md-input-container>
+                        <md-input-container v-if="namespace === 'Create new namespace'">
+                            <label>New namespace</label>
+                            <md-input v-model="namespaceNew"></md-input>
+                        </md-input-container>
+                    </template>
 
-                    <input v-model:value="key" v-bind:disabled="updateMode" placeholder="Key">
-                    <textarea v-model="value" placeholder="Value"></textarea>
+                    <template v-if="! deleteNamespaceMode">
+                        <input v-model="key" v-bind:disabled="updateMode || deleteNamespaceMode" placeholder="Key">
+                        <textarea v-model="value" v-bind:disabled="deleteNamespaceMode" placeholder="Value"></textarea>
+                    </template>
 
                     <div v-show="editMode" class="action-button">
-                        <md-button v-on:click="deleteItem()" v-if="updateMode" class="md-icon-button md-raised md-danger">
+                        <md-button v-on:click="deleteTarget()"
+                                   v-if="updateMode || deleteNamespaceMode"
+                                   class="md-icon-button md-raised md-danger"
+                        >
                             <md-icon class="md-accent">delete</md-icon>
                             <md-tooltip md-direction="top">Delete item</md-tooltip>
                         </md-button>
@@ -47,7 +58,7 @@
             return {
                 loading: false,
                 namespace: null,
-                namespaceOther: null,
+                namespaceNew: null,
                 value: null,
                 key: null,
                 saving: false,
@@ -61,12 +72,19 @@
             this.fetchNamespaces();
 
             this.$events.on('itemClicked', this.handleItemClickedEvent);
+            this.$events.on('namespaceClicked', this.handleNamespaceClickedEvent);
             this.$events.on('createItem', this.handleCreateItemEvent);
         },
         components: {
             spinner: spinner
         },
         computed: {
+            showNamespace() {
+                return this.createMode || this.editMode || this.deleteNamespaceMode;
+            },
+            deleteNamespaceMode() {
+                return this.mode === 'deleteNamespace';
+            },
             /**
              * Calculate if current mode is create
              * @return {Boolean}
@@ -97,13 +115,13 @@
              * @return {String}
              */
             finalNamespace() {
-                return this.namespaceOther ? this.namespaceOther : this.namespace;
+                return this.namespaceNew ? this.namespaceNew : this.namespace;
             }
         },
         methods: {
             resetValues() {
                 this.namespace = null;
-                this.namespaceOther = null;
+                this.namespaceNew = null;
                 this.key = null;
                 this.value = null;
             },
@@ -117,6 +135,38 @@
                 api.getAllNamespaces().then(response => {
                     this.namespaces = response.data;
                     this.loading = false;
+                });
+            },
+            /**
+             * Delete item/namespace
+             * @return {void}
+             */
+            deleteTarget() {
+                if(this.deleteNamespaceMode) {
+                    this.deleteNamespace();
+                } else if(this.editMode) {
+                    this.deleteItem();
+                }
+            },
+            /**
+             * Delete namespace and fire corresponding event
+             * @return {void}
+             */
+            deleteNamespace() {
+                api.deleteNamespace(this.namespace).then(response => {
+                    this.$events.emit('namespaceDeleted', this.namespace);
+                    this.resetValues();
+                    this.$events.emit('notification', {
+                        type: 'success',
+                        message: 'Namespace has been deleted successfully',
+                        description: response.message
+                    });
+                }).catch(error => {
+                    this.$events.emit('notification', {
+                        type: 'error',
+                        message: 'Something went wrong',
+                        description: error.body.message
+                    });
                 });
             },
             /**
@@ -230,6 +280,12 @@
                 this.mode = 'create';
                 this.editMode = true;
                 this.resetValues();
+            },
+            handleNamespaceClickedEvent(namespace) {
+                this.resetValues();
+                this.namespace = namespace;
+                this.mode = 'deleteNamespace';
+                this.editMode = true;
             }
         }
     }

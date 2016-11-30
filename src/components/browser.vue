@@ -233,7 +233,7 @@
         border: none;
         color: rgba(255, 255, 255, .87);
         font-size: 120%;
-        width: 50%;
+        width: calc(100% - 90px);
     }
 
     .search-input:focus {
